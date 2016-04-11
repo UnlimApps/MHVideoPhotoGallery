@@ -26,7 +26,9 @@
     self.overViewViewController= MHOverviewController.new;
     self.imageViewerViewController = MHGalleryImageViewerViewController.new;
     
-    if (presentationStyle != MHGalleryViewModeOverView) {
+    if (presentationStyle == MHGalleryViewModeViewer) {
+        self.viewControllers = @[self.imageViewerViewController];
+    } else if (presentationStyle != MHGalleryViewModeOverView) {
         self.viewControllers = @[self.overViewViewController,self.imageViewerViewController];
     }else{
         self.viewControllers = @[self.overViewViewController];

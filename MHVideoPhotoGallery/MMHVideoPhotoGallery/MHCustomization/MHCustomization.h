@@ -11,7 +11,8 @@
 typedef NS_ENUM(NSUInteger, MHGalleryViewMode) {
     MHGalleryViewModeImageViewerNavigationBarHidden =0,
     MHGalleryViewModeImageViewerNavigationBarShown =1,
-    MHGalleryViewModeOverView =2
+    MHGalleryViewModeOverView =2,
+    MHGalleryViewModeViewer = 3
 };
 
 typedef NS_ENUM(NSUInteger, MHBackButtonState) {
