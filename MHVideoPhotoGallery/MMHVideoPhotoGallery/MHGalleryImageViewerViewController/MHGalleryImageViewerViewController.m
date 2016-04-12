@@ -568,13 +568,6 @@
                                                                         target:self
                                                                         action:nil];
     flex.type = MHBarButtonItemTypeFlexible;
-
-    
-    MHBarButtonItem *fixed = [MHBarButtonItem.alloc initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-                                                                         target:self
-                                                                         action:nil];
-    fixed.width = 30;
-    fixed.type = MHBarButtonItemTypeFixed;
     
     [self enableOrDisbaleBarbButtons];
     
@@ -586,9 +579,9 @@
         }else{
             [self changeToPlayButton];
         }
-        [self setToolbarItemsWithBarButtons:@[self.shareBarButton,flex,self.leftBarButton,flex,self.playStopBarButton,flex,self.rightBarButton,flex,fixed, self.removeButton] forGalleryItem:item];
+        [self setToolbarItemsWithBarButtons:@[self.shareBarButton,flex,self.leftBarButton,flex,self.playStopBarButton,flex,self.rightBarButton,flex, self.removeButton] forGalleryItem:item];
     }else{
-        [self setToolbarItemsWithBarButtons:@[self.shareBarButton,flex,self.leftBarButton,flex,self.rightBarButton,flex,fixed, self.removeButton] forGalleryItem:item];
+        [self setToolbarItemsWithBarButtons:@[self.shareBarButton,flex,self.leftBarButton,flex,self.rightBarButton,flex, self.removeButton] forGalleryItem:item];
     }
 }
 
