@@ -106,22 +106,24 @@
     return MHGalleryViewModeImageViewerNavigationBarShown;
 }
 
--(void)reloadData {
-    if ([self numberOfGalleryItems] > self.pageIndex) {
-        MHGalleryItem *item = [self itemForIndex:self.pageIndex];
-        
-        MHImageViewController *imageViewController = [MHImageViewController imageViewControllerForMHMediaItem:item viewController:self];
-        imageViewController.pageIndex = self.pageIndex;
-        [self.pageViewController setViewControllers:@[imageViewController]
-                                          direction:UIPageViewControllerNavigationDirectionForward
-                                           animated:NO
-                                         completion:nil];
-        
-        [self updateTitleLabelForIndex:self.pageIndex];
-        [self updateDescriptionLabelForIndex:self.pageIndex];
-        [self updateToolBarForItem:item];
-        [self updateTitleForIndex:self.pageIndex];
+- (void)reloadData {
+    if ([self numberOfGalleryItems] <= self.pageIndex && [self numberOfGalleryItems] > 0) {
+        self.pageIndex = [self numberOfGalleryItems] - 1;
     }
+    
+    MHGalleryItem *item = [self itemForIndex:self.pageIndex];
+    
+    MHImageViewController *imageViewController = [MHImageViewController imageViewControllerForMHMediaItem:item viewController:self];
+    imageViewController.pageIndex = self.pageIndex;
+    [self.pageViewController setViewControllers:@[imageViewController]
+                                      direction:UIPageViewControllerNavigationDirectionForward
+                                       animated:NO
+                                     completion:nil];
+    
+    [self updateTitleLabelForIndex:self.pageIndex];
+    [self updateDescriptionLabelForIndex:self.pageIndex];
+    [self updateToolBarForItem:item];
+    [self updateTitleForIndex:self.pageIndex];
 }
 
 -(void)viewDidLoad{
