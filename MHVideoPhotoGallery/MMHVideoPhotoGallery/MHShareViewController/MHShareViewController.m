@@ -256,7 +256,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self cancelPressed];
+    [self cancelShareSheet];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
