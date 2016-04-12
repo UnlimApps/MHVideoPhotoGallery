@@ -57,8 +57,8 @@
 @property (nonatomic,strong) MHTransitionPresentMHGallery       *interactivePresentationTransition;
 @property (nonatomic,assign) MHGalleryViewMode                  presentationStyle;
 @property (nonatomic,assign) UIStatusBarStyle                   preferredStatusBarStyleMH;
-@property (nonatomic, copy) UIImage                             *shareImage;
-@property (nonatomic, copy) UIImage                             *removeImage;
+@property (nonatomic, copy) UIImage                             *shareImage; //Image for share button
+@property (nonatomic, copy) UIImage                             *removeImage; //Image for remove button
 
 /**
  *  There are 3 types to present MHGallery. 
