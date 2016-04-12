@@ -57,6 +57,8 @@
 @property (nonatomic,strong) MHTransitionPresentMHGallery       *interactivePresentationTransition;
 @property (nonatomic,assign) MHGalleryViewMode                  presentationStyle;
 @property (nonatomic,assign) UIStatusBarStyle                   preferredStatusBarStyleMH;
+@property (nonatomic, copy) UIImage                             *shareImage;
+@property (nonatomic, copy) UIImage                             *removeImage;
 
 /**
  *  There are 3 types to present MHGallery. 
@@ -75,6 +77,8 @@
 +(instancetype)galleryWithPresentationStyle:(MHGalleryViewMode)presentationStyle;
 
 @property (nonatomic, copy) void (^finishedCallback)(NSInteger currentIndex,UIImage *image,MHTransitionDismissMHGallery *interactiveTransition,MHGalleryViewMode viewMode);
+
+@property (nonatomic, copy) void (^removeCallback)(NSInteger currentIndex);
 
 /**
  *  Reloads the View from the Datasource.

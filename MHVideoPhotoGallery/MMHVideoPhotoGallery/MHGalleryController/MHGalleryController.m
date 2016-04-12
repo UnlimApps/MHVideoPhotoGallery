@@ -26,6 +26,9 @@
     self.overViewViewController= MHOverviewController.new;
     self.imageViewerViewController = MHGalleryImageViewerViewController.new;
     
+    self.shareImage = nil;
+    self.removeImage = nil;
+    
     if (presentationStyle == MHGalleryViewModeViewer) {
         self.viewControllers = @[self.imageViewerViewController];
     } else if (presentationStyle != MHGalleryViewModeOverView) {
@@ -109,6 +112,10 @@
     if (galleryController.presentationStyle == MHGalleryViewModeImageViewerNavigationBarHidden) {
         galleryController.imageViewerViewController.hiddingToolBarAndNavigationBar = YES;
     }
+    
+    galleryController.imageViewerViewController.shareImage = galleryController.shareImage;
+    galleryController.imageViewerViewController.removeImage = galleryController.removeImage;
+    
     [self presentViewController:galleryController animated:animated completion:completion];
 }
 

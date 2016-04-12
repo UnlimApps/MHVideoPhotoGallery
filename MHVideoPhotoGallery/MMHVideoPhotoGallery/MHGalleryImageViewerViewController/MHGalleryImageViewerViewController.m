@@ -48,6 +48,8 @@
 @property (nonatomic, strong) MHBarButtonItem          *leftBarButton;
 @property (nonatomic, strong) MHBarButtonItem          *rightBarButton;
 @property (nonatomic, strong) MHBarButtonItem          *playStopBarButton;
+@property (nonatomic, strong) MHBarButtonItem          *removeButton;
+
 @end
 
 @implementation MHGalleryImageViewerViewController
@@ -243,11 +245,31 @@
                                                         action:@selector(rightPressed:)];
     self.rightBarButton.type = MHBarButtonItemTypeRigth;
 
+    if (self.shareImage) {
+        self.shareBarButton = [MHBarButtonItem.alloc initWithImage:self.shareImage
+                                                             style:UIBarButtonItemStylePlain
+                                                            target:self
+                                                            action:@selector(sharePressed)];
+    } else {
+        self.shareBarButton = [MHBarButtonItem.alloc initWithBarButtonSystemItem:UIBarButtonSystemItemAction
+                                                                          target:self
+                                                                          action:@selector(sharePressed)];
+    }
     
-    self.shareBarButton = [MHBarButtonItem.alloc initWithBarButtonSystemItem:UIBarButtonSystemItemAction
-                                                                      target:self
-                                                                      action:@selector(sharePressed)];
     self.shareBarButton.type = MHBarButtonItemTypeShare;
+    
+    if (self.removeImage) {
+        self.removeButton = [MHBarButtonItem.alloc initWithImage:self.removeImage
+                                                             style:UIBarButtonItemStylePlain
+                                                            target:self
+                                                            action:@selector(removePressed)];
+    } else {
+        self.removeButton = [MHBarButtonItem.alloc initWithBarButtonSystemItem:UIBarButtonSystemItemTrash
+                                                                          target:self
+                                                                          action:@selector(removePressed)];
+    }
+    
+    self.removeButton.type = MHBarButtonItemTypeCustom;
     
     if (self.UICustomization.hideShare) {
         
@@ -411,6 +433,13 @@
     }
 }
 
+- (void)removePressed {
+    MHGalleryController *galleryViewController = [self.viewController galleryViewController];
+    if (galleryViewController.removeCallback) {
+        galleryViewController.finishedCallback(self.pageIndex);
+    }
+}
+
 -(void)updateTitleLabelForIndex:(NSInteger)index{
     if (index < self.numberOfGalleryItems) {
         MHGalleryItem *item = [self itemForIndex:index];
@@ -551,9 +580,9 @@
         }else{
             [self changeToPlayButton];
         }
-        [self setToolbarItemsWithBarButtons:@[self.shareBarButton,flex,self.leftBarButton,flex,self.playStopBarButton,flex,self.rightBarButton,flex,fixed] forGalleryItem:item];
+        [self setToolbarItemsWithBarButtons:@[self.shareBarButton,flex,self.leftBarButton,flex,self.playStopBarButton,flex,self.rightBarButton,flex,fixed, self.removeButton] forGalleryItem:item];
     }else{
-        [self setToolbarItemsWithBarButtons:@[self.shareBarButton,flex,self.leftBarButton,flex,self.rightBarButton,flex,fixed] forGalleryItem:item];
+        [self setToolbarItemsWithBarButtons:@[self.shareBarButton,flex,self.leftBarButton,flex,self.rightBarButton,flex,fixed, self.removeButton] forGalleryItem:item];
     }
 }
 
