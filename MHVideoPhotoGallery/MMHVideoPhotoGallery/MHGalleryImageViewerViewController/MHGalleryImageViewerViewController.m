@@ -107,7 +107,7 @@
 }
 
 - (void)reloadData {
-    if ([self numberOfGalleryItems] > 0) {
+    if ([self numberOfGalleryItems] == 0) {
         [self dismissViewControllerAnimated:YES completion:nil];
     } else {
         if ([self numberOfGalleryItems] <= self.pageIndex) {
