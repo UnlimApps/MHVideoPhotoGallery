@@ -434,7 +434,7 @@
 }
 
 - (void)removePressed {
-    MHGalleryController *galleryViewController = [self.viewController galleryViewController];
+    MHGalleryController *galleryViewController = [self galleryViewController];
     if (galleryViewController.removeCallback) {
         galleryViewController.finishedCallback(self.pageIndex);
     }
