@@ -317,6 +317,8 @@
 -(void)cancelInteractiveTransition{
     [super cancelInteractiveTransition];
     
+    __weak UINavigationController *fromViewController = (UINavigationController*)[self.context viewControllerForKey:UITransitionContextFromViewControllerKey];
+    
     [UIView animateWithDuration:0.3 animations:^{
         if (self.moviePlayer) {
             if (self.toTransform != self.orientationTransformBeforeDismiss) {
@@ -333,48 +335,48 @@
         }
         self.backView.alpha = 1;
     } completion:^(BOOL finished) {
-        
-        self.transitionImageView.hidden = NO;
-        [self.cellImageSnapshot removeFromSuperview];
-        [self.backView removeFromSuperview];
-        
-        UINavigationController *fromViewController = (UINavigationController*)[self.context viewControllerForKey:UITransitionContextFromViewControllerKey];
-        if (self.moviePlayer) {
-            if (self.toTransform != self.orientationTransformBeforeDismiss) {
-                self.moviePlayer.view.transform = CGAffineTransformMakeRotation(self.toTransform);
-                self.moviePlayer.view.center = CGPointMake(self.moviePlayer.view.bounds.size.width/2, self.moviePlayer.view.bounds.size.height/2);
-            }else{
-                self.moviePlayer.view.bounds = fromViewController.view.bounds;
+        if (fromViewController != nil) {
+            self.transitionImageView.hidden = NO;
+            [self.cellImageSnapshot removeFromSuperview];
+            [self.backView removeFromSuperview];
+            
+            if (self.moviePlayer) {
+                if (self.toTransform != self.orientationTransformBeforeDismiss) {
+                    self.moviePlayer.view.transform = CGAffineTransformMakeRotation(self.toTransform);
+                    self.moviePlayer.view.center = CGPointMake(self.moviePlayer.view.bounds.size.width/2, self.moviePlayer.view.bounds.size.height/2);
+                }else{
+                    self.moviePlayer.view.bounds = fromViewController.view.bounds;
+                }
             }
-        }
-        
-        fromViewController.view.alpha =1;
-        
-        MHGalleryImageViewerViewController *imageViewer  = (MHGalleryImageViewerViewController*)fromViewController.visibleViewController;
-        imageViewer.pageViewController.view.hidden = NO;
-        
-        if (self.moviePlayer) {
-            MHImageViewController *imageViewController = (MHImageViewController*)imageViewer.pageViewController.viewControllers.firstObject;
-            [imageViewController.view insertSubview:self.moviePlayer.view atIndex:2];
-        }
-        
-        if ([self.context respondsToSelector:@selector(viewForKey:)]) { // is on iOS 8?
-            [UIApplication.sharedApplication.keyWindow addSubview:fromViewController.view];
-            self.moviePlayer = nil;
-        }
-        
-        [self.context completeTransition:NO];
-        if (self.moviePlayer) {
-            [UIView performWithoutAnimation:^{
-                [self doOrientationwithFromViewController:fromViewController];
-            }];
-        }else{
-            if (MHGalleryOSVersion < 8.0) {
-                [self doOrientationwithFromViewController:fromViewController];
-            }else{
+            
+            fromViewController.view.alpha =1;
+            
+            MHGalleryImageViewerViewController *imageViewer  = (MHGalleryImageViewerViewController*)fromViewController.visibleViewController;
+            imageViewer.pageViewController.view.hidden = NO;
+            
+            if (self.moviePlayer) {
+                MHImageViewController *imageViewController = (MHImageViewController*)imageViewer.pageViewController.viewControllers.firstObject;
+                [imageViewController.view insertSubview:self.moviePlayer.view atIndex:2];
+            }
+            
+            if ([self.context respondsToSelector:@selector(viewForKey:)]) { // is on iOS 8?
+                [UIApplication.sharedApplication.keyWindow addSubview:fromViewController.view];
+                self.moviePlayer = nil;
+            }
+            
+            [self.context completeTransition:NO];
+            if (self.moviePlayer) {
                 [UIView performWithoutAnimation:^{
                     [self doOrientationwithFromViewController:fromViewController];
                 }];
+            }else{
+                if (MHGalleryOSVersion < 8.0) {
+                    [self doOrientationwithFromViewController:fromViewController];
+                }else{
+                    [UIView performWithoutAnimation:^{
+                        [self doOrientationwithFromViewController:fromViewController];
+                    }];
+                }
             }
         }
     }];
