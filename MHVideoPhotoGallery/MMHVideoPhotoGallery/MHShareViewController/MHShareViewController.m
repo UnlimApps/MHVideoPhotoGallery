@@ -907,9 +907,7 @@
                                                                                             action:@selector(cancelPressed)];
         self.navigationItem.rightBarButtonItem = nil;
         
-        if (self.showingShareViewInLandscapeMode) {
-            self.toolbar.frame = CGRectMake(0, self.view.frame.size.height-240, self.view.frame.size.width,240);
-        }
+        self.toolbar.frame = CGRectMake(0, self.view.frame.size.height-240, self.view.frame.size.width,240);
     }else{
         self.navigationItem.rightBarButtonItem = [self nextBarButtonItem];
     }
