@@ -385,6 +385,14 @@
         make.height.mas_equalTo(240);
     }];
     
+    [self.gradientView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self.collectionView.mas_bottom);
+        make.left.mas_equalTo(self.view.mas_left);
+        make.bottom.mas_equalTo(self.view.mas_bottom);
+        make.right.mas_equalTo(self.view.mas_right);
+        make.height.mas_equalTo(240);
+    }];
+    
     
     [self initShareObjects];
     [self updateTitle];
@@ -421,6 +429,10 @@
     }];
     
     [self.toolbar mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(self.view.mas_bottom).with.offset(UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait ? 0 : 240);
+    }];
+    
+    [self.gradientView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.bottom.mas_equalTo(self.view.mas_bottom).with.offset(UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait ? 0 : 240);
     }];
 }
