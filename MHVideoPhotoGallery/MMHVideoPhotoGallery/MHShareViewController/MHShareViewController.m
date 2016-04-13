@@ -420,6 +420,9 @@
         make.bottom.mas_equalTo(self.view.mas_bottom).with.offset(UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait ? 0 : 240);
     }];
     
+    [self.toolbar mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.bottom.mas_equalTo(self.view.mas_bottom).with.offset(UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait ? 0 : 240);
+    }];
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView
@@ -906,8 +909,6 @@
                                                                                             target:self
                                                                                             action:@selector(cancelPressed)];
         self.navigationItem.rightBarButtonItem = nil;
-        
-        self.toolbar.frame = CGRectMake(0, self.view.frame.size.height-240, self.view.frame.size.width,240);
     }else{
         self.navigationItem.rightBarButtonItem = [self nextBarButtonItem];
     }
