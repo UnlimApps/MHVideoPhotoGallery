@@ -176,10 +176,11 @@
     
     NSArray *galleryData = self.galleryDataSource[collectionView.tag];
     
-    MHGalleryController *gallery = [MHGalleryController galleryWithPresentationStyle:MHGalleryViewModeImageViewerNavigationBarShown];
+    MHGalleryController *gallery = [MHGalleryController galleryWithPresentationStyle:MHGalleryViewModeViewer];
     gallery.galleryItems = galleryData;
     gallery.presentingFromImageView = imageView;
     gallery.presentationIndex = indexPath.row;
+    gallery.transitionCustomization.interactiveDismiss = NO;
    // gallery.UICustomization.hideShare = YES;
     gallery.galleryDelegate = self;
     //  gallery.dataSource = self;
