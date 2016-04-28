@@ -1258,9 +1258,9 @@
         [self.moviewPlayerButtonBehinde addGestureRecognizer:self.pan];
     }
     
-//    if(self.playingVideo){
+    if(self.playingVideo){
         [self bringMoviePlayerToFront];
-//    }
+    }
     if (self.shouldPlayVideo) {
         self.shouldPlayVideo = NO;
         if (self.pageIndex == self.viewController.pageIndex) {
