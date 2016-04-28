@@ -807,7 +807,7 @@
 
 -(void)userDidPan:(UIPanGestureRecognizer*)recognizer{
     
-    BOOL userScrolls = self.viewController.userScrolls;
+    BOOL userScrolls = YES;//self.viewController.userScrolls;
     if (self.viewController.transitionCustomization.dismissWithScrollGestureOnFirstAndLastImage) {
         if (!self.interactiveTransition) {
             if (self.viewController.numberOfGalleryItems ==1) {
