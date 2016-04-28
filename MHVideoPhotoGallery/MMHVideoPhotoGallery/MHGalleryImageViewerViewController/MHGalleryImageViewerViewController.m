@@ -1249,8 +1249,8 @@
     [self.moviewPlayerButtonBehinde addTarget:self action:@selector(handelImageTap:) forControlEvents:UIControlEventTouchUpInside];
     self.moviewPlayerButtonBehinde.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
     
-    [self.view bringSubviewToFront:self.scrollView];
     [self.view addSubview:self.moviewPlayerButtonBehinde];
+    [self.view bringSubviewToFront:self.scrollView];
     [self.view bringSubviewToFront:self.moviePlayerToolBarTop];
     [self.view bringSubviewToFront:self.playButton];
     
@@ -1438,6 +1438,7 @@
 -(void)bringMoviePlayerToFront{
     [self.view bringSubviewToFront:self.moviePlayer.view];
     [self.view bringSubviewToFront:self.moviewPlayerButtonBehinde];
+    [self.view bringSubviewToFront:self.scrollView];
     [self.view bringSubviewToFront:self.moviePlayerToolBarTop];
 }
 
