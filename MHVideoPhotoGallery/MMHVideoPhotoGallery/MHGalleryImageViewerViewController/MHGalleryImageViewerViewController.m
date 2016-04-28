@@ -1258,9 +1258,9 @@
         [self.moviewPlayerButtonBehinde addGestureRecognizer:self.pan];
     }
     
-    if(self.playingVideo){
+//    if(self.playingVideo){
         [self bringMoviePlayerToFront];
-    }
+//    }
     if (self.shouldPlayVideo) {
         self.shouldPlayVideo = NO;
         if (self.pageIndex == self.viewController.pageIndex) {
@@ -1404,7 +1404,6 @@
     self.moviePlayer.movieSourceType = MPMovieSourceTypeStreaming;
     self.moviePlayer.controlStyle = MPMovieControlStyleNone;
     self.moviePlayer.contentURL = URL;
-    self.moviePlayer.view.userInteractionEnabled = NO;
     
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(loadStateDidChange:)
