@@ -1404,6 +1404,7 @@
     self.moviePlayer.movieSourceType = MPMovieSourceTypeStreaming;
     self.moviePlayer.controlStyle = MPMovieControlStyleNone;
     self.moviePlayer.contentURL = URL;
+    self.moviePlayer.view.userInteractionEnabled = NO;
     
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(loadStateDidChange:)
