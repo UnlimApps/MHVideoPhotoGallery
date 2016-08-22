@@ -16,6 +16,8 @@
         return nil;
     self.galleryType = MHGalleryTypeImage;
     self.image = image;
+    self.watermark = @"";
+    self.showWatermark = false;
     return self;
 }
 
@@ -48,6 +50,8 @@
     self.descriptionString = nil;
     self.galleryType = galleryType;
     self.attributedString = nil;
+    self.watermark = @"";
+    self.showWatermark = false;
     return self;
 }
 +(instancetype)itemWithURL:(NSString *)URLString
@@ -70,6 +74,8 @@
     self.descriptionString = nil;
     self.galleryType = MHGalleryTypeImage;
     self.attributedString = nil;
+    self.watermark = @"";
+    self.showWatermark = false;
     return self;
 }
 

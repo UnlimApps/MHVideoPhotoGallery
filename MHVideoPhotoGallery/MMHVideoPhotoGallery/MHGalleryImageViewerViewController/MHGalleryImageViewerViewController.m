@@ -1042,6 +1042,7 @@
                     weakSelf.scrollView.maximumZoomScale  =1;
                     [weakSelf changeToErrorImage];
                 }
+                [weakSelf addWatermarkToImage:image error:error];
                 [weakSelf.act stopAnimating];
             }];
             
@@ -1071,6 +1072,32 @@
         self.imageView.image = image;
     }
     [self.act stopAnimating];
+}
+
+- (void)addWatermarkToImage:(UIImage *)image error:(NSError *)error {
+    if (self.item.showWatermark
+        && self.item.watermark.length > 0
+        && !error) {
+        UIGraphicsBeginImageContext(image.size);
+        
+        CGFloat textHeight          = 18;
+        CGFloat rightTextMargin     = 5;
+        CGFloat fontSize            = 12;
+        
+        NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        style.alignment = NSTextAlignmentRight;
+        NSDictionary *attributes = @{NSForegroundColorAttributeName: [UIColor whiteColor],
+                                     NSParagraphStyleAttributeName: style,
+                                     NSFontAttributeName: [UIFont systemFontOfSize:fontSize]};
+        
+        
+        [image drawInRect:CGRectMake(0, 0, image.size.width, image.size.height)];
+        [self.item.watermark drawInRect:CGRectMake(0, image.size.height - textHeight, image.size.width - rightTextMargin, textHeight) withAttributes:attributes];
+        UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+        
+        UIGraphicsEndImageContext();
+        [self.imageView setImage:result];
+    }
 }
 
 -(void)changeToErrorImage{
@@ -1124,6 +1151,9 @@
     
     self.playButton.frame = CGRectMake(self.viewController.view.frame.size.width/2-36, self.viewController.view.frame.size.height/2-36, 72, 72);
     self.playButton.hidden = NO;
+    
+    [self addWatermarkToImage:image error:nil];
+    
     [self.act stopAnimating];
 }
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{

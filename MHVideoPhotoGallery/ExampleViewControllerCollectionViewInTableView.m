@@ -56,12 +56,18 @@
     
     MHGalleryItem *tailored = [MHGalleryItem.alloc initWithURL:@"http://www.tailored-apps.com/wp-content/uploads/2014/01/wien_cropped-350x300.jpg"
                                                        galleryType:MHGalleryTypeImage];
+    tailored.watermark = @"01/13/16 | 05:32PM";
+    tailored.showWatermark = true;
     
     MHGalleryItem *tailored2 = [MHGalleryItem.alloc initWithURL:@"http://www.tailored-apps.com/wp-content/uploads/2014/01/hannes.jpg"
                                                    galleryType:MHGalleryTypeImage];
+    tailored2.watermark = @"02/13/16 | 05:32PM";
+    tailored2.showWatermark = true;
     
     MHGalleryItem *tailored3 = [MHGalleryItem.alloc initWithURL:@"https://dl.dropboxusercontent.com/u/17911939/momu%26meParty.mp4"
                                                     galleryType:MHGalleryTypeVideo];
+    tailored3.watermark = @"03/13/16 | 05:32PM";
+    tailored3.showWatermark = true;
     
     NSShadow *shadow = [[NSShadow alloc] init];
     shadow.shadowColor = [UIColor blackColor];
