@@ -1080,9 +1080,10 @@
         && !error) {
         UIGraphicsBeginImageContext(image.size);
         
-        CGFloat textHeight          = 18;
-        CGFloat rightTextMargin     = 5;
-        CGFloat fontSize            = 12;
+        CGFloat minSize = MIN(image.size.width * image.scale, image.size.height * image.scale);
+        CGFloat textHeight          = minSize * 0.05;
+        CGFloat fontSize            = textHeight * 0.67;
+        CGFloat rightTextMargin     = textHeight - fontSize;
         
         NSMutableParagraphStyle *style = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
         style.alignment = NSTextAlignmentRight;
