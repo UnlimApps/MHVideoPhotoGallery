@@ -1466,10 +1466,10 @@
     [self changeToPlayable];
 }
 
--(void)bringMoviePlayerToFront{
+- (void)bringMoviePlayerToFront {
+    [self.view bringSubviewToFront:self.scrollView];
     [self.view bringSubviewToFront:self.moviePlayer.view];
     [self.view bringSubviewToFront:self.moviewPlayerButtonBehinde];
-    [self.view bringSubviewToFront:self.scrollView];
     [self.view bringSubviewToFront:self.moviePlayerToolBarTop];
 }
 
