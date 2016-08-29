@@ -931,7 +931,7 @@
         
         self.item = mediaItem;
         
-        self.scrollView = [UIScrollView.alloc initWithFrame:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height+([UIApplication sharedApplication].statusBarHidden?0:20), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - (self.navigationController.navigationBar.bounds.size.height+([UIApplication sharedApplication].statusBarHidden?0:20)) - CGRectGetHeight(self.viewController.toolbar.frame))];
+        self.scrollView = [UIScrollView.alloc initWithFrame:self.view.bounds];
         self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth |UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleBottomMargin;
         self.scrollView.delegate = self;
         self.scrollView.tag = 406;
@@ -1560,6 +1560,9 @@
         }
         
     }
+    
+    [self resizeContent];
+    [self centerImageView];
 }
 
 -(void)changeUIForViewMode:(MHGalleryViewMode)viewMode{
@@ -1587,14 +1590,6 @@
 }
 
 -(void)handelImageTap:(UIGestureRecognizer *)gestureRecognizer{
-    CGSize contentSize = self.scrollView.contentSize;
-    if (contentSize.width < CGRectGetWidth(self.view.bounds)) {
-        contentSize.width = CGRectGetWidth(self.view.bounds);
-    }
-    if (contentSize.height < CGRectGetHeight(self.view.bounds)) {
-        contentSize.height = CGRectGetHeight(self.view.bounds);
-    }
-    
     if (!self.viewController.isHiddingToolBarAndNavigationBar) {
         if ([gestureRecognizer respondsToSelector:@selector(locationInView:)]) {
             CGPoint tappedLocation = [gestureRecognizer locationInView:self.view];
@@ -1610,8 +1605,8 @@
             }
             [self changeUIForViewMode:MHGalleryViewModeImageViewerNavigationBarHidden];
             
-            self.scrollView.frame = self.view.bounds;
-            self.imageView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
+            [self resizeContent:!self.viewController.hiddingToolBarAndNavigationBar];
+            [self centerImageView];
             
         } completion:^(BOOL finished) {
             
@@ -1631,8 +1626,8 @@
                 }
             }
             
-            self.scrollView.frame = CGRectMake(0, self.navigationController.navigationBar.bounds.size.height+([UIApplication sharedApplication].statusBarHidden?0:20), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - (self.navigationController.navigationBar.bounds.size.height+([UIApplication sharedApplication].statusBarHidden?0:20)) - CGRectGetHeight(self.viewController.toolbar.frame));
-            self.imageView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
+            [self resizeContent:!self.viewController.hiddingToolBarAndNavigationBar];
+            [self centerImageView];
             
         } completion:^(BOOL finished) {
             self.viewController.hiddingToolBarAndNavigationBar = NO;
@@ -1715,9 +1710,23 @@
 }
 
 -(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
+    [self changeUIForViewMode:self.viewController.isHiddingToolBarAndNavigationBar ? MHGalleryViewModeImageViewerNavigationBarHidden : MHGalleryViewModeImageViewerNavigationBarShown];
+    [self resizeContent];
     [self prepareToResize];
     [self recoverFromResizing];
     [self centerImageView];
+}
+
+- (void)resizeContent {
+    [self resizeContent:self.viewController.isHiddingToolBarAndNavigationBar];
+}
+
+- (void)resizeContent:(BOOL)isHiddingToolBarAndNavigationBar {
+    CGRect initialFrame = !isHiddingToolBarAndNavigationBar
+    ? CGRectMake(0, self.navigationController.navigationBar.bounds.size.height+([UIApplication sharedApplication].statusBarHidden?0:20), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - (self.navigationController.navigationBar.bounds.size.height+([UIApplication sharedApplication].statusBarHidden?0:20)) - (CGRectGetHeight(self.viewController.toolbar.frame) > 0 ? CGRectGetHeight(self.viewController.toolbar.frame) : 44))
+    : self.view.bounds;
+    
+    self.scrollView.frame = initialFrame;
 }
 
 -(void)centerImageView{
@@ -1741,6 +1750,11 @@
         }else{
             frameToCenter.origin.y = 0;
         }
+        
+        if (_scrollView.zoomScale == 1) {
+            frameToCenter = self.scrollView.bounds;
+        }
+        
         self.imageView.frame = frameToCenter;
     }
 }
