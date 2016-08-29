@@ -931,7 +931,7 @@
         
         self.item = mediaItem;
         
-        self.scrollView = [UIScrollView.alloc initWithFrame:self.view.bounds];
+        self.scrollView = [UIScrollView.alloc initWithFrame:CGRectMake(0, self.navigationController.navigationBar.bounds.size.height+([UIApplication sharedApplication].statusBarHidden?0:20), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - (self.navigationController.navigationBar.bounds.size.height+([UIApplication sharedApplication].statusBarHidden?0:20)) - CGRectGetHeight(self.viewController.toolbar.frame))];
         self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth |UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleBottomMargin;
         self.scrollView.delegate = self;
         self.scrollView.tag = 406;
