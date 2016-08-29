@@ -1587,6 +1587,14 @@
 }
 
 -(void)handelImageTap:(UIGestureRecognizer *)gestureRecognizer{
+    CGSize contentSize = self.scrollView.contentSize;
+    if (contentSize.width < CGRectGetWidth(self.view.bounds)) {
+        contentSize.width = CGRectGetWidth(self.view.bounds);
+    }
+    if (contentSize.height < CGRectGetHeight(self.view.bounds)) {
+        contentSize.height = CGRectGetHeight(self.view.bounds);
+    }
+    
     if (!self.viewController.isHiddingToolBarAndNavigationBar) {
         if ([gestureRecognizer respondsToSelector:@selector(locationInView:)]) {
             CGPoint tappedLocation = [gestureRecognizer locationInView:self.view];
@@ -1601,6 +1609,10 @@
                 self.moviePlayerToolBarTop.alpha =0;
             }
             [self changeUIForViewMode:MHGalleryViewModeImageViewerNavigationBarHidden];
+            
+            self.scrollView.frame = self.view.bounds;
+            self.imageView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
+            
         } completion:^(BOOL finished) {
             
             self.viewController.hiddingToolBarAndNavigationBar = YES;
@@ -1618,6 +1630,10 @@
                     self.moviePlayerToolBarTop.alpha =1;
                 }
             }
+            
+            self.scrollView.frame = CGRectMake(0, CGRectGetHeight(self.moviePlayerToolBarTop.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds) - CGRectGetHeight(self.navigationController.navigationBar.frame) - CGRectGetHeight(self.viewController.toolbar.frame));
+            self.imageView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
+            
         } completion:^(BOOL finished) {
             self.viewController.hiddingToolBarAndNavigationBar = NO;
         }];
