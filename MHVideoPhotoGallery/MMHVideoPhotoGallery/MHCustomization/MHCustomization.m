@@ -32,7 +32,6 @@
 - (instancetype)init{
     self = [super init];
     if (self) {
-        
         self.descriptionLinkAttributes = @{NSForegroundColorAttributeName : UIApplication.sharedApplication.keyWindow.tintColor ? : UIColor.redColor};
         self.descriptionActiveLinkAttributes = @{NSForegroundColorAttributeName : UIColor.whiteColor};
         self.descriptionTruncationString = [self truncationString];
@@ -47,7 +46,7 @@
         self.videoProgressTintColor = UIColor.blackColor;
         
         self.backgroundColorsForViewModes = [NSMutableDictionary  dictionaryWithDictionary:@{@"0":UIColor.blackColor,
-                                                                                             @"1":UIColor.whiteColor,
+                                                                                             @"1":UIColor.blackColor,
                                                                                              @"2":UIColor.whiteColor}];
         
         
@@ -78,6 +77,13 @@
         flowLayoutPort.minimumLineSpacing = 4;
         flowLayoutPort.itemSize = CGSizeMake(screenSize.width/3.1, screenSize.width/3.1);
         self.overViewCollectionViewLayoutPortrait = flowLayoutPort;
+        
+        self.backArrowImage = MHTemplateImage(@"ic_square");
+        
+        self.leftArrowImage  = MHGalleryImage(@"left_arrow");
+        self.rightArrowImage = MHGalleryImage(@"right_arrow");
+        
+        self.counterLabelFont = [UIFont systemFontOfSize:15.f];
         
     }
     return self;
@@ -112,6 +118,5 @@
 -(UIColor*)MHGalleryBackgroundColorForViewMode:(MHGalleryViewMode)viewMode{
     return self.backgroundColorsForViewModes[[NSString stringWithFormat:@"%@",@(viewMode)]];
 }
-
 
 @end

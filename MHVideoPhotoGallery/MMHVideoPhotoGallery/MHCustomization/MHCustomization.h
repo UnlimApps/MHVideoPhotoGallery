@@ -17,7 +17,8 @@ typedef NS_ENUM(NSUInteger, MHGalleryViewMode) {
 
 typedef NS_ENUM(NSUInteger, MHBackButtonState) {
     MHBackButtonStateWithBackArrow,
-    MHBackButtonStateWithoutBackArrow
+    MHBackButtonStateWithoutBackArrow,
+    MHBackButtonStateCustomBackArrow
 };
 
 @interface MHTransitionCustomization : NSObject
@@ -39,6 +40,13 @@ typedef NS_ENUM(NSUInteger, MHBackButtonState) {
 @property (nonatomic)        BOOL useCustomBackButtonImageOnImageViewer; //Default YES
 @property (nonatomic)        BOOL showOverView; //Default YES
 @property (nonatomic)        MHBackButtonState backButtonState; //Default MHBackButtonStateWithBackArrow
+
+@property (nonatomic, strong) UIImage *backArrowImage;
+
+@property (nonatomic, strong) UIImage *leftArrowImage;
+@property (nonatomic, strong) UIImage *rightArrowImage;
+
+@property (nonatomic, strong) UIFont *counterLabelFont;
 
 @property (nonatomic,strong) UIBarButtonItem *customBarButtonItem; //A optional UIBarButtonItem displayed in the lower right corner. Default nil
 
