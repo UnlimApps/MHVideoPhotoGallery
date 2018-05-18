@@ -64,7 +64,7 @@
     tailored2.watermark = @"02/13/16 | 05:32PM";
     tailored2.showWatermark = true;
     
-    MHGalleryItem *tailored3 = [MHGalleryItem.alloc initWithURL:@"https://dl.dropboxusercontent.com/u/17911939/momu%26meParty.mp4"
+    MHGalleryItem *tailored3 = [MHGalleryItem.alloc initWithURL:@"http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4"
                                                     galleryType:MHGalleryTypeVideo];
     tailored3.watermark = @"03/13/16 | 05:32PM";
     tailored3.showWatermark = true;
