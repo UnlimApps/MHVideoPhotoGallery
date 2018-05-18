@@ -612,8 +612,6 @@
 				F53F923C17EB008100A9FE6A /* Sources */,
 				F53F923D17EB008100A9FE6A /* Frameworks */,
 				F53F923E17EB008100A9FE6A /* Resources */,
-				154DE1A8AB3006705A727A0A /* [CP] Embed Pods Frameworks */,
-				DFD69ABFEC3ABB13B89F14B1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -652,7 +650,7 @@
 				ORGANIZATIONNAME = "Mario Hahn";
 				TargetAttributes = {
 					F53F923F17EB008100A9FE6A = {
-						DevelopmentTeam = 22DEN472RY;
+						DevelopmentTeam = 798YAD3KNV;
 					};
 					F53F926017EB008100A9FE6A = {
 						TestTargetID = F53F923F17EB008100A9FE6A;
@@ -748,21 +746,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		154DE1A8AB3006705A727A0A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MHVideoPhotoGallery/Pods-MHVideoPhotoGallery-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6D82B4507816821052C7125C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -779,21 +762,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DFD69ABFEC3ABB13B89F14B1 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MHVideoPhotoGallery/Pods-MHVideoPhotoGallery-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -958,10 +926,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 798YAD3KNV;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MHVideoPhotoGallery/MHVideoPhotoGallery-Prefix.pch";
 				INFOPLIST_FILE = "MHVideoPhotoGallery/MHVideoPhotoGallery-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.MarioHahn.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -978,10 +947,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 798YAD3KNV;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MHVideoPhotoGallery/MHVideoPhotoGallery-Prefix.pch";
 				INFOPLIST_FILE = "MHVideoPhotoGallery/MHVideoPhotoGallery-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.MarioHahn.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
