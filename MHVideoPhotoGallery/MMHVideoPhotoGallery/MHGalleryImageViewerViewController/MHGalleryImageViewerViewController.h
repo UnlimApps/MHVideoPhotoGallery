@@ -26,7 +26,6 @@
 @property (nonatomic, strong)          NSArray *galleryItems;
 @property (nonatomic, strong)          UIToolbar *toolbar;
 @property (nonatomic, strong)          MHScrollViewLabel *titleLabel;
-@property (nonatomic, strong)          MHScrollViewLabel *descriptionLabel;
 @property (nonatomic)                  NSInteger pageIndex;
 @property (nonatomic, strong)          UIPageViewController *pageViewController;
 @property (nonatomic, strong)          UIImageView *presentingFromImageView;

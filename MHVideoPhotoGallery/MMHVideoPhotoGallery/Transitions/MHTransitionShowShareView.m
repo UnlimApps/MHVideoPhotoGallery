@@ -36,16 +36,17 @@
         [cellImageSnapshot setFrame:AVMakeRectWithAspectRatioInsideRect(cellImageSnapshot.imageMH.size, cellImageSnapshot.frame)];
         
         toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
-        toViewController.tableViewShare.frame = CGRectMake(0, fromViewController.view.frame.size.height, fromViewController.view.frame.size.width, 240);
-        toViewController.gradientView.frame = CGRectMake(0, fromViewController.view.frame.size.height, fromViewController.view.frame.size.width,240);
+        toViewController.tableViewShare.frame = CGRectMake(0, fromViewController.view.frame.size.height - toViewController.view.safeAreaInsets.bottom,
+                                                           fromViewController.view.frame.size.width, 240);
+        toViewController.gradientView.frame = CGRectMake(0, fromViewController.view.frame.size.height- toViewController.view.safeAreaInsets.bottom,
+                                                         fromViewController.view.frame.size.width,240);
         toViewController.collectionView.alpha =0;
-        toViewController.collectionView.frame =  CGRectMake(0, 0, fromViewController.view.frame.size.width, fromViewController.view.frame.size.height-240);
-        
-        if([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait){
-            toViewController.collectionView.frame =  CGRectMake(0, 0, fromViewController.view.frame.size.width, fromViewController.view.frame.size.height-240);
-        }else{
-            toViewController.collectionView.frame =  CGRectMake(0, 0, fromViewController.view.frame.size.width, fromViewController.view.frame.size.height);
-        }
+        toViewController.collectionView.frame =  CGRectMake(0, 0, fromViewController.view.frame.size.width,
+                                                            fromViewController.view.frame.size.height-(240+fromViewController.view.safeAreaInsets.bottom));
+
+        toViewController.collectionView.frame =  CGRectMake(0, 0, fromViewController.view.frame.size.width,
+                                                                fromViewController.view.frame.size.height-(240+fromViewController.view.safeAreaInsets.bottom));
+
         
         MHGalleryController *galleryController = (MHGalleryController*)fromViewController.navigationController;
         
@@ -76,14 +77,11 @@
             [UIView animateWithDuration:duration animations:^{
                 
                 toViewController.collectionView.alpha =1;
-               
-                if([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationPortrait){
-                    toViewController.gradientView.frame = CGRectMake(0, toViewController.view.frame.size.height-240, toViewController.view.frame.size.width,240);
-                    toViewController.tableViewShare.frame = CGRectMake(0, toViewController.view.frame.size.height-230, toViewController.view.frame.size.width, 240);
-                }else{
-                    toViewController.gradientView.frame = CGRectMake(0, toViewController.view.frame.size.height, toViewController.view.frame.size.width,240);
-                    toViewController.tableViewShare.frame = CGRectMake(0, toViewController.view.frame.size.height, toViewController.view.frame.size.width, 240);
-                }
+
+                toViewController.gradientView.frame = CGRectMake(0, toViewController.view.frame.size.height-240 - toViewController.view.safeAreaInsets.bottom,
+                                                                 toViewController.view.frame.size.width,240);
+                toViewController.tableViewShare.frame = CGRectMake(0, toViewController.view.frame.size.height-230- toViewController.view.safeAreaInsets.bottom,
+                                                                   toViewController.view.frame.size.width, 240);
                 fromViewController.view.alpha =0;
                 cellImageSnapshot.frame = [containerView convertRect:cell.thumbnail.frame fromView:cell.thumbnail.superview];
                 cellImageSnapshot.contentMode = UIViewContentModeScaleAspectFill;
@@ -130,7 +128,8 @@
         
         
         
-        toViewController.toolbar.frame = CGRectMake(0, fromViewController.view.frame.size.height-44, fromViewController.view.frame.size.width, 44);
+        toViewController.toolbar.frame = CGRectMake(0, fromViewController.view.frame.size.height-44 - toViewController.view.safeAreaInsets.bottom,
+                                                    fromViewController.view.frame.size.width, 44);
         MHGalleryController *galleryController = (MHGalleryController*)fromViewController.navigationController;
         MHGalleryItem *item = [galleryController.dataSource itemForIndex:toViewController.pageIndex];
         [toViewController updateToolBarForItem:item];
@@ -146,7 +145,6 @@
         
         MHUIImageViewContentViewAnimation *cellImageSnapshot = [[MHUIImageViewContentViewAnimation alloc] initWithFrame:[containerView convertRect:cell.thumbnail.frame fromView:cell.thumbnail.superview]];
         cellImageSnapshot.image = cell.thumbnail.image;
-        
         toViewController.view.alpha =0;
         
         
@@ -158,9 +156,10 @@
         [containerView addSubview:toViewController.view];
         [containerView addSubview:backWhite];
         [containerView addSubview:cellImageSnapshot];
-        
         [cellImageSnapshot animateToViewMode:UIViewContentModeScaleAspectFit
-                                    forFrame:CGRectMake(0, 0, toViewController.view.frame.size.width, toViewController.view.frame.size.height)
+                                    forFrame:CGRectMake(0, toViewController.view.frame.origin.y,
+                                                        toViewController.view.frame.size.width,
+                                                        toViewController.view.frame.size.height - toViewController.view.safeAreaInsets.bottom)
                                 withDuration:duration
                                   afterDelay:0
                                     finished:^(BOOL finished) {

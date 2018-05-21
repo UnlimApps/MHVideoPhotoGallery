@@ -211,7 +211,7 @@
 @property (nonatomic)        NSInteger saveCounter;
 @property (nonatomic,strong) NSMutableArray *dataDownload;
 @property (nonatomic,strong) NSMutableArray *sessions;
-
+@property (nonatomic,strong) CAGradientLayer *gradientLayer;
 @end
 
 @implementation MHShareViewController
@@ -355,6 +355,7 @@
     [self.view addSubview:self.toolbar];
     
     CAGradientLayer *gradient = CAGradientLayer.layer;
+    self.gradientLayer = gradient;
     gradient.frame = self.gradientView.bounds;
     gradient.colors = @[(id)[UIColor colorWithRed:0.97 green:0.97 blue:0.97 alpha:1].CGColor,
                         (id)[UIColor colorWithRed:0.97 green:0.97 blue:0.97 alpha:1].CGColor];
@@ -380,7 +381,7 @@
     [self.tableViewShare mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.collectionView.mas_bottom);
         make.left.mas_equalTo(self.view.mas_left);
-        make.bottom.mas_equalTo(self.view.mas_bottom);
+        make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
         make.right.mas_equalTo(self.view.mas_right);
         make.height.mas_equalTo(240);
     }];
@@ -388,11 +389,18 @@
     [self.gradientView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.collectionView.mas_bottom);
         make.left.mas_equalTo(self.view.mas_left);
-        make.bottom.mas_equalTo(self.view.mas_bottom);
+        make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
         make.right.mas_equalTo(self.view.mas_right);
         make.height.mas_equalTo(240);
     }];
     
+    [self.toolbar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self.collectionView.mas_bottom);
+        make.left.mas_equalTo(self.view.mas_left);
+        make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        make.right.mas_equalTo(self.view.mas_right);
+        make.height.mas_equalTo(240);
+    }];
     
     [self initShareObjects];
     [self updateTitle];
@@ -415,26 +423,8 @@
                                                             ]];
     
     self.shareDataSourceStart = [NSArray arrayWithArray:self.shareDataSource];
-    if(UIApplication.sharedApplication.statusBarOrientation != UIInterfaceOrientationPortrait){
-        self.navigationItem.rightBarButtonItem = [self nextBarButtonItem];
-    }
-    self.startPointScroll = self.collectionView.contentOffset.x;
-}
 
--(void)viewDidLayoutSubviews{
-    [super viewDidLayoutSubviews];
-    
-    [self.tableViewShare mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self.view.mas_bottom).with.offset(UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait ? 0 : 240);
-    }];
-    
-    [self.toolbar mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self.view.mas_bottom).with.offset(UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait ? 0 : 240);
-    }];
-    
-    [self.gradientView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self.view.mas_bottom).with.offset(UIApplication.sharedApplication.statusBarOrientation == UIInterfaceOrientationPortrait ? 0 : 240);
-    }];
+    self.startPointScroll = self.collectionView.contentOffset.x;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView
@@ -896,46 +886,26 @@
             }else if (item.image) {
                 [self addDataToDownloadArray:item.image];
             }else{
-                
-                [SDWebImageManager.sharedManager downloadImageWithURL:[NSURL URLWithString:item.URLString] options:SDWebImageContinueInBackground progress:nil completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
-                    
-                    MHImageURL *imageURLMH = [MHImageURL.alloc initWithURL:item.URLString
-                                                                     image:image];
-                    [weakSelf addDataToDownloadArray:imageURLMH];
-                }];
+                [SDWebImageManager.sharedManager loadImageWithURL:[NSURL URLWithString:item.URLString]
+                                                          options:SDWebImageContinueInBackground
+                                                         progress:nil
+                                                        completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                                                            MHImageURL *imageURLMH = [MHImageURL.alloc initWithURL:item.URLString
+                                                                                                             image:image];
+                                                            [weakSelf addDataToDownloadArray:imageURLMH];
+                                                        }];
             }
         }
     }
 }
 -(void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-                                        duration:(NSTimeInterval)duration{
-    
-    [self.tableViewShare mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self.view.mas_bottom).with.offset(toInterfaceOrientation == UIInterfaceOrientationPortrait ? 0 : 240);
-    }];
-    
-    [self.tableViewShare layoutIfNeeded];
-    
-    if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
-        self.navigationItem.leftBarButtonItem = [UIBarButtonItem.alloc initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                                            target:self
-                                                                                            action:@selector(cancelPressed)];
-        self.navigationItem.rightBarButtonItem = nil;
-    }else{
-        self.navigationItem.rightBarButtonItem = [self nextBarButtonItem];
-    }
+                                        duration:(NSTimeInterval)duration {
+    self.gradientLayer.frame = self.gradientView.bounds;
     [self.collectionView.collectionViewLayout invalidateLayout];
 }
 
--(UIBarButtonItem*)nextBarButtonItem{
-    return [UIBarButtonItem.alloc initWithTitle:@"Next"
-                                          style:UIBarButtonItemStylePlain
-                                         target:self
-                                         action:@selector(showShareSheet)];
-}
-
 -(void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation{
-    
+    [self.collectionView.delegate scrollViewDidScroll:self.collectionView];
     NSArray *visibleCells = [self sortObjectsWithFrame:self.collectionView.visibleCells];
     NSInteger numberToScrollTo = visibleCells.count/2;
     MHMediaPreviewCollectionViewCell *cell =  (MHMediaPreviewCollectionViewCell*)visibleCells[numberToScrollTo];
@@ -949,37 +919,11 @@
     }
     
 }
+
 -(void)cancelShareSheet{
     self.showingShareViewInLandscapeMode = NO;
-    
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem.alloc initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                                        target:self
-                                                                                        action:@selector(cancelPressed)];
-    
-    self.navigationItem.rightBarButtonItem = [self nextBarButtonItem];
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        self.toolbar.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width,240);
-        self.tableViewShare.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 240);
-    }];
 }
--(void)showShareSheet{
-    self.showingShareViewInLandscapeMode = YES;
-    self.navigationItem.rightBarButtonItem = nil;
-    
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem.alloc initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                                                                                        target:self
-                                                                                        action:@selector(cancelShareSheet)];
-    
-    self.toolbar.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width,240);
-    self.tableViewShare.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 240);
-    
-    [UIView animateWithDuration:0.3 animations:^{
-        self.toolbar.frame = CGRectMake(0, self.view.frame.size.height-240, self.view.frame.size.width,240);
-        self.tableViewShare.frame = CGRectMake(0, self.view.frame.size.height-230, self.view.frame.size.width, 240);
-    }];
-    
-}
+
 -(void)saveImages:(NSArray*)object{
     [self getAllImagesForSelectedRows:^(NSArray *images) {
         for (MHImageURL *dataURL in images) {

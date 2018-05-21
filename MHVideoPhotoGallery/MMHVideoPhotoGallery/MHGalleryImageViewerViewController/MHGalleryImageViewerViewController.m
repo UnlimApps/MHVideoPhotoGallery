@@ -1,4 +1,4 @@
-
+//
 //  MHGalleryImageViewerViewController.m
 //  MHVideoPhotoGallery
 //
@@ -41,8 +41,8 @@
 @end
 
 @interface MHGalleryImageViewerViewController()<MHGalleryLabelDelegate,TTTAttributedLabelDelegate>
-@property (nonatomic, strong) MHGradientView           *bottomSuperView;
-@property (nonatomic, strong) MHGradientView           *topSuperView;
+//@property (nonatomic, strong) MHGradientView           *bottomSuperView;
+//@property (nonatomic, strong) MHGradientView           *topSuperView;
 
 @property (nonatomic, strong) MHBarButtonItem          *shareBarButton;
 @property (nonatomic, strong) MHBarButtonItem          *leftBarButton;
@@ -177,13 +177,14 @@
     self.toolbar = UIToolbar.new;
     self.toolbar.tintColor = self.UICustomization.barButtonsTintColor;
     self.toolbar.tag = 307;
+    self.toolbar.translatesAutoresizingMaskIntoConstraints = false;
     [self.view addSubview:self.toolbar];
     
-    [self.toolbar mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.view.mas_left);
-        make.right.mas_equalTo(self.view.mas_right);
-        make.bottom.mas_equalTo(self.view.mas_bottom);
-    }];
+    [NSLayoutConstraint activateConstraints:@[
+        [self.toolbar.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
+        [self.toolbar.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
+        [self.toolbar.bottomAnchor constraintEqualToAnchor:self.bottomLayoutGuide.topAnchor]
+    ]];
     
 //    self.topSuperView = [MHGradientView.alloc initWithDirection:MHGradientDirectionBottomToTop andCustomization:self.UICustomization];
 //    [self.view addSubview:self.topSuperView];
@@ -197,19 +198,18 @@
 //    self.titleLabel.textLabel.labelDelegate = self;
 //    self.titleLabel.textLabel.delegate = self;
 //    self.titleLabel.textLabel.UICustomization = self.UICustomization;
+//    self.titleLabel.translatesAutoresizingMaskIntoConstraints = false;
 //    [self.topSuperView addSubview:self.titleLabel];
-    
-//    [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.left.mas_equalTo(self.topSuperView.mas_left).with.offset(10);
-//        make.right.mas_equalTo(self.topSuperView.mas_right).with.offset(-10);
-//        make.bottom.mas_equalTo(self.topSuperView.mas_bottom).with.offset(-20);
-//        make.top.mas_equalTo(self.topSuperView.mas_top).with.offset(5);
-//    }];
-    
-    self.navigationTitleLabel = [UILabel.alloc initWithFrame:CGRectZero];
-    self.navigationTitleLabel.font = self.UICustomization.counterLabelFont;
-    self.navigationItem.titleView = self.navigationTitleLabel;
-    
+//
+//    [NSLayoutConstraint activateConstraints:
+//     @[
+//       [self.titleLabel.leadingAnchor constraintEqualToAnchor:self.view.readableContentGuide.leadingAnchor],
+//       [self.titleLabel.trailingAnchor constraintEqualToAnchor:self.view.readableContentGuide.trailingAnchor],
+//       [self.titleLabel.topAnchor constraintEqualToAnchor:self.topSuperView.topAnchor constant:5],
+//       [self.titleLabel.bottomAnchor constraintEqualToAnchor:self.topSuperView.bottomAnchor constant: -20],
+//       ]
+//     ];
+//
 //    self.bottomSuperView = [MHGradientView.alloc initWithDirection:MHGradientDirectionTopToBottom andCustomization:self.UICustomization];
 //    [self.view addSubview:self.bottomSuperView];
 //
@@ -223,15 +223,22 @@
 //    self.descriptionLabel.textLabel.labelDelegate = self;
 //    self.descriptionLabel.textLabel.delegate = self;
 //    self.descriptionLabel.textLabel.UICustomization = self.UICustomization;
+//    self.descriptionLabel.translatesAutoresizingMaskIntoConstraints = false;
 //    [self.bottomSuperView addSubview:self.descriptionLabel];
 //
-//    [self.descriptionLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.left.mas_equalTo(self.bottomSuperView.mas_left).with.offset(10);
-//        make.right.mas_equalTo(self.bottomSuperView.mas_right).with.offset(-10);
-//        make.bottom.mas_equalTo(self.bottomSuperView.mas_bottom).with.offset(-5);
-//        make.top.mas_equalTo(self.bottomSuperView.mas_top).with.offset(20);
-//    }];
+//    [NSLayoutConstraint activateConstraints:
+//     @[
+//       [self.descriptionLabel.leadingAnchor constraintEqualToAnchor:self.view.readableContentGuide.leadingAnchor],
+//       [self.descriptionLabel.trailingAnchor constraintEqualToAnchor:self.view.readableContentGuide.trailingAnchor],
+//       [self.descriptionLabel.topAnchor constraintEqualToAnchor:self.bottomSuperView.topAnchor constant:20],
+//       [self.descriptionLabel.bottomAnchor constraintEqualToAnchor:self.bottomSuperView.bottomAnchor constant: -5],
+//       ]
+//     ];
 
+    self.navigationTitleLabel = [UILabel.alloc initWithFrame:CGRectZero];
+    self.navigationTitleLabel.font = self.UICustomization.counterLabelFont;
+    self.navigationItem.titleView = self.navigationTitleLabel;
+    
     self.playStopBarButton = [MHBarButtonItem.alloc initWithImage:MHGalleryImage(@"play")
                                                             style:UIBarButtonItemStylePlain
                                                            target:self
@@ -313,11 +320,7 @@
 //    [self.topSuperView mas_updateConstraints:^(MASConstraintMaker *make) {
 //        make.top.mas_equalTo(self.mas_topLayoutGuideBottom);
 //    }];
-    [self.toolbar mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(self.view.mas_left);
-        make.right.mas_equalTo(self.view.mas_right);
-        make.bottom.mas_equalTo(self.view.mas_bottom);
-    }];
+//
 //    [self.bottomSuperView mas_updateConstraints:^(MASConstraintMaker *make) {
 //        make.bottom.mas_equalTo(self.toolbar.mas_top);
 //    }];
@@ -1031,9 +1034,7 @@
         self.imageView.userInteractionEnabled = YES;
         
         [imageTap requireGestureRecognizerToFail: doubleTap];
-        
-        
-        
+
         if (self.item.galleryType == MHGalleryTypeImage) {
             
             
@@ -1326,7 +1327,7 @@
 -(void)updateTimerLabels{
     
     if (self.currentTimeMovie <=0) {
-        self.leftSliderLabel.text =@"00:00";
+        self.leftSliderLabel.text = @"00:00";
         
         self.rightSliderLabel.text = [MHGallerySharedManager stringForMinutesAndSeconds:self.wholeTimeMovie addMinus:YES];
     }else{
@@ -1578,10 +1579,6 @@
     
     self.navigationController.navigationBar.alpha = alpha;
     self.viewController.toolbar.alpha = alpha;
-    
-//    self.viewController.topSuperView.alpha = alpha;
-//    self.viewController.descriptionLabel.alpha = alpha;
-//    self.viewController.bottomSuperView.alpha = alpha;
 
     if (!MHShouldShowStatusBar()) {
         alpha = 0;
