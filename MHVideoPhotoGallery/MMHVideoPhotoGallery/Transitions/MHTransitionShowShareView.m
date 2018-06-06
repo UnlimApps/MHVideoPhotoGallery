@@ -35,23 +35,25 @@
         
         [cellImageSnapshot setFrame:AVMakeRectWithAspectRatioInsideRect(cellImageSnapshot.imageMH.size, cellImageSnapshot.frame)];
 
-        CGFloat bottomSafeInset = .0;
+        CGFloat toBottomSafeInset = .0;
+        CGFloat fromBottomSafeInset = .0;
         if (@available(iOS 11.0, *)) {
-            bottomSafeInset = toViewController.view.safeAreaInsets.bottom;
+            toBottomSafeInset = toViewController.view.safeAreaInsets.bottom;
+            fromBottomSafeInset = fromViewController.view.safeAreaInsets.bottom;
         }
         
         toViewController.view.frame = [transitionContext finalFrameForViewController:toViewController];
-        toViewController.tableViewShare.frame = CGRectMake(0, fromViewController.view.frame.size.height - bottomSafeInset,
+        toViewController.tableViewShare.frame = CGRectMake(0, fromViewController.view.frame.size.height - toBottomSafeInset,
                                                            fromViewController.view.frame.size.width, 240);
 
-        toViewController.gradientView.frame = CGRectMake(0, fromViewController.view.frame.size.height - bottomSafeInset,
+        toViewController.gradientView.frame = CGRectMake(0, fromViewController.view.frame.size.height - toBottomSafeInset,
                                                          fromViewController.view.frame.size.width,240);
         toViewController.collectionView.alpha =0;
         toViewController.collectionView.frame =  CGRectMake(0, 0, fromViewController.view.frame.size.width,
-                                                            fromViewController.view.frame.size.height-(240 + bottomSafeInset));
+                                                            fromViewController.view.frame.size.height-(240 + fromBottomSafeInset));
 
         toViewController.collectionView.frame =  CGRectMake(0, 0, fromViewController.view.frame.size.width,
-                                                                fromViewController.view.frame.size.height-(240 + bottomSafeInset));
+                                                                fromViewController.view.frame.size.height-(240 + fromBottomSafeInset));
 
         
         MHGalleryController *galleryController = (MHGalleryController*)fromViewController.navigationController;
@@ -84,9 +86,9 @@
                 
                 toViewController.collectionView.alpha =1;
 
-                toViewController.gradientView.frame = CGRectMake(0, toViewController.view.frame.size.height-240 - bottomSafeInset,
+                toViewController.gradientView.frame = CGRectMake(0, toViewController.view.frame.size.height-240 - toBottomSafeInset,
                                                                  toViewController.view.frame.size.width,240);
-                toViewController.tableViewShare.frame = CGRectMake(0, toViewController.view.frame.size.height-230 - bottomSafeInset,
+                toViewController.tableViewShare.frame = CGRectMake(0, toViewController.view.frame.size.height-230 - toBottomSafeInset,
                                                                    toViewController.view.frame.size.width, 240);
                 fromViewController.view.alpha =0;
                 cellImageSnapshot.frame = [containerView convertRect:cell.thumbnail.frame fromView:cell.thumbnail.superview];
@@ -131,12 +133,12 @@
 
         [containerView addSubview:toViewController.view];
         
-        CGFloat bottomSafeInset = .0;
+        CGFloat toBottomSafeInset = .0;
         if (@available(iOS 11.0, *)) {
-            bottomSafeInset = toViewController.view.safeAreaInsets.bottom;
+            toBottomSafeInset = toViewController.view.safeAreaInsets.bottom;
         }
         
-        toViewController.toolbar.frame = CGRectMake(0, fromViewController.view.frame.size.height-44 - bottomSafeInset,
+        toViewController.toolbar.frame = CGRectMake(0, fromViewController.view.frame.size.height-44 - toBottomSafeInset,
                                                     fromViewController.view.frame.size.width, 44);
         MHGalleryController *galleryController = (MHGalleryController*)fromViewController.navigationController;
         MHGalleryItem *item = [galleryController.dataSource itemForIndex:toViewController.pageIndex];
@@ -167,7 +169,7 @@
         [cellImageSnapshot animateToViewMode:UIViewContentModeScaleAspectFit
                                     forFrame:CGRectMake(0, toViewController.view.frame.origin.y,
                                                         toViewController.view.frame.size.width,
-                                                        toViewController.view.frame.size.height - bottomSafeInset)
+                                                        toViewController.view.frame.size.height - toBottomSafeInset)
                                 withDuration:duration
                                   afterDelay:0
                                     finished:^(BOOL finished) {
