@@ -167,8 +167,9 @@
     }
     return self;
 }
--(void)prepareForReuse{
-    
+
+- (void)prepareForReuse {
+    [super prepareForReuse];
 }
 
 @end
@@ -381,7 +382,11 @@
     [self.tableViewShare mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.collectionView.mas_bottom);
         make.left.mas_equalTo(self.view.mas_left);
-        make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        if (@available(iOS 11.0, *)) {
+            make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        } else {
+            make.bottom.mas_equalTo(self.view.mas_bottom);
+        }
         make.right.mas_equalTo(self.view.mas_right);
         make.height.mas_equalTo(240);
     }];
@@ -389,7 +394,11 @@
     [self.gradientView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.collectionView.mas_bottom);
         make.left.mas_equalTo(self.view.mas_left);
-        make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        if (@available(iOS 11.0, *)) {
+            make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        } else {
+            make.bottom.mas_equalTo(self.view.mas_bottom);
+        }
         make.right.mas_equalTo(self.view.mas_right);
         make.height.mas_equalTo(240);
     }];
@@ -397,7 +406,11 @@
     [self.toolbar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(self.collectionView.mas_bottom);
         make.left.mas_equalTo(self.view.mas_left);
-        make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        if (@available(iOS 11.0, *)) {
+            make.bottom.mas_equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        } else {
+            make.bottom.mas_equalTo(self.view.mas_bottom);
+        }
         make.right.mas_equalTo(self.view.mas_right);
         make.height.mas_equalTo(240);
     }];
