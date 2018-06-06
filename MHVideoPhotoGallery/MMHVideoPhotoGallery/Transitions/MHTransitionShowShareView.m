@@ -85,6 +85,11 @@
             [UIView animateWithDuration:duration animations:^{
                 
                 toViewController.collectionView.alpha =1;
+                
+                CGFloat toBottomSafeInset = .0;
+                if (@available(iOS 11.0, *)) {
+                    toBottomSafeInset = toViewController.view.safeAreaInsets.bottom;
+                }
 
                 toViewController.gradientView.frame = CGRectMake(0, toViewController.view.frame.size.height-240 - toBottomSafeInset,
                                                                  toViewController.view.frame.size.width,240);
