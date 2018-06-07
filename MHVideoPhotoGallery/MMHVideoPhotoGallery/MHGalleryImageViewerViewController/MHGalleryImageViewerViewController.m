@@ -55,6 +55,8 @@
 
 @property (nonatomic, strong) UILabel                  *navigationTitleLabel;
 
+@property (nonatomic) Boolean transtactionInProgress;
+
 @end
 
 @implementation MHGalleryImageViewerViewController
@@ -628,6 +630,10 @@
 }
 
 -(void)leftPressed:(id)sender{
+    if (_transtactionInProgress) {
+        return;
+    }
+    
     self.rightBarButton.enabled = YES;
     
     MHImageViewController *theCurrentViewController = self.pageViewController.viewControllers.firstObject;
@@ -648,14 +654,21 @@
     
     __weak typeof(self) weakSelf = self;
     
+    _transtactionInProgress = YES;
     [self.pageViewController setViewControllers:@[imageViewController] direction:UIPageViewControllerNavigationDirectionReverse animated:YES completion:^(BOOL finished) {
         weakSelf.pageIndex = imageViewController.pageIndex;
         [weakSelf updateToolBarForItem:[weakSelf itemForIndex:weakSelf.pageIndex]];
         [weakSelf showCurrentIndex:weakSelf.pageIndex];
+        
+        _transtactionInProgress = NO;
     }];
 }
 
 -(void)rightPressed:(id)sender{
+    if (_transtactionInProgress) {
+        return;
+    }
+    
     self.leftBarButton.enabled =YES;
     
     MHImageViewController *theCurrentViewController = self.pageViewController.viewControllers.firstObject;
@@ -676,10 +689,13 @@
     
     __weak typeof(self) weakSelf = self;
     
+    _transtactionInProgress = YES;
     [self.pageViewController setViewControllers:@[imageViewController] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:^(BOOL finished) {
         weakSelf.pageIndex = imageViewController.pageIndex;
         [weakSelf updateToolBarForItem:[weakSelf itemForIndex:weakSelf.pageIndex]];
         [weakSelf showCurrentIndex:weakSelf.pageIndex];
+        
+        _transtactionInProgress = NO;
     }];
 }
 
