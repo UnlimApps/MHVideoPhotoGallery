@@ -14,6 +14,7 @@
 #import "Masonry.h"
 #import "MHGradientView.h"
 #import "MHBarButtonItem.h"
+@import PKHUD;
 
 @implementation MHPinchGestureRecognizer
 @end
@@ -71,7 +72,6 @@
     [super viewWillAppear:animated];
     
     [self setNeedsStatusBarAppearanceUpdate];
-    
     
     [UIApplication.sharedApplication setStatusBarStyle:self.galleryViewController.preferredStatusBarStyleMH
                                               animated:YES];
@@ -1021,12 +1021,7 @@
         
         [self.view addGestureRecognizer:imageTap];
         
-        self.act = [UIActivityIndicatorView.alloc initWithFrame:self.view.bounds];
-        [self.act startAnimating];
-        self.act.hidesWhenStopped =YES;
-        self.act.tag =507;
-        self.act.autoresizingMask =UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
-        [self.scrollView addSubview:self.act];
+        [[PKHUD sharedHUD] showOnView:self.view];
         if (self.item.galleryType == MHGalleryTypeVideo) {
             [self addPlayButtonToView];
             
@@ -1098,7 +1093,7 @@
                     [weakSelf changeToErrorImage];
                 }
                 [weakSelf addWatermarkToImage:image error:error];
-                [weakSelf.act stopAnimating];
+                [[PKHUD sharedHUD] hide:YES completion:nil];
             }];
             
         } else if (self.item.galleryType == MHGalleryTypeVideo){
@@ -1111,7 +1106,7 @@
                                                                     }else{
                                                                         [weakSelf changeToErrorImage];
                                                                     }
-                                                                    [weakSelf.act stopAnimating];
+                                                                    [[PKHUD sharedHUD] hide:YES completion:nil];
                                                                 }];
         }
     }
@@ -1126,7 +1121,7 @@
     }else{
         self.imageView.image = image;
     }
-    [self.act stopAnimating];
+    [[PKHUD sharedHUD] hide:YES completion:nil];
 }
 
 - (void)addWatermarkToImage:(UIImage *)image error:(NSError *)error {
@@ -1212,7 +1207,7 @@
     
     [self addWatermarkToImage:image error:nil];
     
-    [self.act stopAnimating];
+    [[PKHUD sharedHUD] hide:YES completion:nil];
 }
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
     if (self.interactiveOverView) {
