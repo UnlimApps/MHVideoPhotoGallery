@@ -88,12 +88,22 @@
     if (self.navigationController.delegate == self) {
         self.navigationController.delegate = nil;
     }
+    MHImageViewController *imageViewer = self.pageViewController.viewControllers.firstObject;
+    if (imageViewer.moviePlayer) {
+        [imageViewer removeAllMoviePlayerViewsAndNotifications];
+    }
+    if (imageViewer.webView) {
+        [imageViewer.webView loadHTMLString:@"" baseURL:nil];
+    }
 }
 
 -(void)donePressed{
     MHImageViewController *imageViewer = self.pageViewController.viewControllers.firstObject;
     if (imageViewer.moviePlayer) {
         [imageViewer removeAllMoviePlayerViewsAndNotifications];
+    }
+    if (imageViewer.webView) {
+        [imageViewer.webView loadHTMLString:@"" baseURL:nil];
     }
     MHTransitionDismissMHGallery *dismissTransiton = [MHTransitionDismissMHGallery new];
     dismissTransiton.orientationTransformBeforeDismiss = [(NSNumber *)[self.navigationController.view valueForKeyPath:@"layer.transform.rotation.z"] floatValue];
@@ -542,6 +552,7 @@
     if (finished) {
         for (MHImageViewController *imageViewController in previousViewControllers) {
             [self removeVideoPlayerForVC:imageViewController];
+            [self stopLoadWebViewForVC:imageViewController];
         }
     }
     if (completed) {
@@ -550,6 +561,19 @@
 }
 
 
+-(void)stopLoadWebViewForVC:(MHImageViewController*)vc{
+    if (vc.pageIndex != self.pageIndex) {
+        if (vc.webView) {
+            if (vc.item.galleryType == MHGalleryTypeAnother) {
+                [vc.webView stopLoading];
+                //stop audio via JS
+//                NSString *script = @"var vids = document.getElementsByTagName('video'); for( var i = 0; i < vids.length; i++ ){vids.item(i).pause()}";
+//                [vc.webView evaluateJavaScript:script completionHandler:nil];
+                [vc.webView loadHTMLString:@"" baseURL:nil];
+            }
+        }
+    }
+}
 
 -(void)removeVideoPlayerForVC:(MHImageViewController*)vc{
     if (vc.pageIndex != self.pageIndex) {
@@ -640,6 +664,9 @@
     if (theCurrentViewController.moviePlayer) {
         [theCurrentViewController removeAllMoviePlayerViewsAndNotifications];
     }
+    if (theCurrentViewController.webView) {
+        [self stopLoadWebViewForVC:theCurrentViewController];
+    }
 
     NSUInteger indexPage = theCurrentViewController.pageIndex;
     MHImageViewController *imageViewController =[MHImageViewController imageViewControllerForMHMediaItem:[self itemForIndex:indexPage-1] viewController:self];
@@ -675,7 +702,9 @@
     if (theCurrentViewController.moviePlayer) {
         [theCurrentViewController removeAllMoviePlayerViewsAndNotifications];
     }
-
+    if (theCurrentViewController.webView) {
+        [self stopLoadWebViewForVC:theCurrentViewController];
+    }
     NSUInteger indexPage = theCurrentViewController.pageIndex;
     MHImageViewController *imageViewController =[MHImageViewController imageViewControllerForMHMediaItem:[self itemForIndex:indexPage+1] viewController:self];
     imageViewController.pageIndex = indexPage+1;
@@ -998,7 +1027,7 @@
         self.act.tag =507;
         self.act.autoresizingMask =UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
         [self.scrollView addSubview:self.act];
-        if (self.item.galleryType != MHGalleryTypeImage) {
+        if (self.item.galleryType == MHGalleryTypeVideo) {
             [self addPlayButtonToView];
             
             self.moviePlayerToolBarTop = [UIToolbar.alloc initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
@@ -1046,6 +1075,15 @@
             self.scrollView.maximumZoomScale = 1;
             self.scrollView.minimumZoomScale =1;
         }
+        if (self.item.galleryType == MHGalleryTypeAnother) {
+            self.scrollView.maximumZoomScale = 1;
+            self.scrollView.minimumZoomScale =1;
+            WKWebViewConfiguration *configuration = [WKWebViewConfiguration new];
+            configuration.preferences.javaScriptEnabled = YES;
+            self.webView = [WKWebView.alloc initWithFrame:self.view.bounds configuration:configuration];
+            self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth |UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleBottomMargin;
+            [self.view addSubview:self.webView];
+        }
         
         self.imageView.userInteractionEnabled = YES;
         
@@ -1063,7 +1101,7 @@
                 [weakSelf.act stopAnimating];
             }];
             
-        }else{
+        } else if (self.item.galleryType == MHGalleryTypeVideo){
             [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.URLString
                                                                 successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
                                                                     if (!error) {
@@ -1145,6 +1183,8 @@
                 [weakSelf autoPlayVideo];
             }
         }];
+    } else if (self.item.galleryType == MHGalleryTypeAnother) {
+        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.item.URLString]]];
     }
     
 }
@@ -1740,6 +1780,7 @@
     : self.view.bounds;
     
     self.scrollView.frame = initialFrame;
+    self.webView.frame = initialFrame;
 }
 
 -(void)centerImageView{

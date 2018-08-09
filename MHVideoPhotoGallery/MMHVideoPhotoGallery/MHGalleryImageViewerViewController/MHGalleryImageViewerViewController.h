@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 #import "MHGallery.h"
 #import "MHGalleryLabel.h"
 #import "MHScrollViewLabel.h"
@@ -59,6 +60,7 @@
 @property (nonatomic,strong)        UIActivityIndicatorView *act;
 @property (nonatomic,strong)        UIImageView *imageView;
 @property (nonatomic,strong)        MPMoviePlayerController *moviePlayer;
+@property (nonatomic,strong)        WKWebView *webView;
 
 @property (nonatomic)               NSInteger pageIndex;
 @property (nonatomic)               NSInteger currentTimeMovie;
