@@ -17,3 +17,6 @@
 "shareview.title.select.singular" = "%@ billed valgt";
 "shareview.download"              = "download data\n";
 "shareview.download.cancel"       = "Annuller";
+"Choose action" = "Choose action";
+"Share Link" = "Share Link";
+"Export Document" = "Export Document";

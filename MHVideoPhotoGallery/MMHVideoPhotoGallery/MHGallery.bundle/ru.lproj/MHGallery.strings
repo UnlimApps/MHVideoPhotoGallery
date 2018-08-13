@@ -18,3 +18,6 @@
 "shareview.download"              = "Загрузка\n";
 "shareview.download.cancel"       = "Отмена";
 "truncate.more"                   = "more";
+"Choose action" = "Выберите действие";
+"Share Link" = "Поделится ссылкой";
+"Export Document" = "Экспортировать файл";

@@ -15,6 +15,7 @@
 #import "MHGradientView.h"
 #import "MHBarButtonItem.h"
 @import PKHUD;
+@import MobileCoreServices;
 
 @implementation MHPinchGestureRecognizer
 @end
@@ -30,6 +31,7 @@
 @property (nonatomic, strong) NSTimer                  *movieDownloadedTimer;
 @property (nonatomic, strong) UIPanGestureRecognizer   *pan;
 @property (nonatomic, strong) MHPinchGestureRecognizer *pinch;
+@property (nonatomic, strong) PKHUD                    *hud;
 
 @property (nonatomic)         NSInteger                wholeTimeMovie;
 @property (nonatomic)         CGPoint                  pointToCenterAfterResize;
@@ -439,24 +441,82 @@
     }
 }
 
--(void)sharePressed{
-    if (self.UICustomization.showMHShareViewInsteadOfActivityViewController) {
-        MHShareViewController *share = [MHShareViewController new];
-        share.pageIndex = self.pageIndex;
-        share.galleryItems = self.galleryItems;
-        [self.navigationController pushViewController:share
-                                             animated:YES];
-    }else{
-        MHImageViewController *imageViewController = (MHImageViewController*)self.pageViewController.viewControllers.firstObject;
-        if (imageViewController.imageView.image != nil) {
-            UIActivityViewController *act = [UIActivityViewController.alloc initWithActivityItems:@[imageViewController.imageView.image] applicationActivities:nil];
-            [self presentViewController:act animated:YES completion:nil];
-            
-            if ([act respondsToSelector:@selector(popoverPresentationController)]) {
-                act.popoverPresentationController.barButtonItem = self.shareBarButton;
-            }
-        }        
+- (void)showShareDialog:(id<UIActivityItemSource>)item {
+    if(item != nil) {
+        UIActivityViewController *act = [UIActivityViewController.alloc initWithActivityItems:@[item] applicationActivities:nil];
+        act.excludedActivityTypes = @[UIActivityTypeAssignToContact];
+        [self presentViewController:act animated:YES completion:nil];
+        
+        if ([act respondsToSelector:@selector(popoverPresentationController)]) {
+            act.popoverPresentationController.barButtonItem = self.shareBarButton;
+        }
     }
+}
+
+- (void)downloadFile:(MHGalleryItem *)item {
+    __block BOOL isSaved = NO;
+    NSURL *urlToDownload = [NSURL URLWithString: item.URLString];
+    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *filename = item.titleString.pathExtension.length == 0
+                                            ? urlToDownload.lastPathComponent
+                                            : item.titleString;
+    NSURL *filePath = [NSURL fileURLWithPath:[documentsDirectory stringByAppendingPathComponent:filename]];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath.path]) {
+        [self showShareDialog: filePath];
+    } else {
+        PKHUD *downLoadHud = [[PKHUD alloc] init];
+        downLoadHud.contentView = [[PKHUDGearRotatingImageView alloc] initWithImage:nil
+                                                                           subtitle:nil
+                                                                              frame:CGRectMake(0, 0, 88, 88)
+                                                                               mode:HUDModeStandart];
+        [downLoadHud showOnView:nil];
+        UIApplication *application = [UIApplication sharedApplication];
+        UIBackgroundTaskIdentifier __block task = [application beginBackgroundTaskWithExpirationHandler:^{
+            if (task != UIBackgroundTaskInvalid) {
+                [application endBackgroundTask:task];
+                task = UIBackgroundTaskInvalid;
+            }
+        }];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            NSData *urlData = [NSData dataWithContentsOfURL:urlToDownload];
+            if (urlData) {
+                isSaved = [urlData writeToURL:filePath atomically:YES];
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [downLoadHud hide:YES completion:nil];
+                if (isSaved) {
+                    [self showShareDialog: filePath];
+                }
+                if (task != UIBackgroundTaskInvalid) {
+                    [application endBackgroundTask:task];
+                    task = UIBackgroundTaskInvalid;
+                }
+            });
+        });
+    }
+}
+
+-(void)sharePressed{
+    UIAlertController *actioSheet = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(@"Choose action")
+                                                                        message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    __weak typeof(self) weakSelf = self;
+    [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"Share Link") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        MHImageViewController *imageViewController = (MHImageViewController*)weakSelf.pageViewController.viewControllers.firstObject;
+        [weakSelf showShareDialog: imageViewController.item.URLString];
+    }]];
+    [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"Export Document") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        MHImageViewController *imageViewController = (MHImageViewController*)weakSelf.pageViewController.viewControllers.firstObject;
+        if (imageViewController.item.galleryType == MHGalleryTypeImage) {
+            [weakSelf showShareDialog: imageViewController.imageView.image];
+        } else {
+            [weakSelf downloadFile:imageViewController.item];
+        }
+    }]];
+    [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"shareview.download.cancel") style:UIAlertActionStyleCancel handler:nil]];
+    if (actioSheet.popoverPresentationController) {
+        actioSheet.popoverPresentationController.barButtonItem = self.shareBarButton;
+    }
+    [self presentViewController:actioSheet animated:YES completion:nil];
 }
 
 - (void)removePressed {
@@ -798,7 +858,6 @@
 
 @implementation MHImageViewController
 
-
 +(MHImageViewController *)imageViewControllerForMHMediaItem:(MHGalleryItem*)item
                                              viewController:(MHGalleryImageViewerViewController*)viewController{
     if (item) {
@@ -1020,8 +1079,13 @@
         }
         
         [self.view addGestureRecognizer:imageTap];
-        
-        [[PKHUD sharedHUD] showOnView:self.view];
+        [self.hud.contentView removeFromSuperview];
+        self.hud = [[PKHUD alloc] init];
+        self.hud.contentView = [[PKHUDGearRotatingImageView alloc] initWithImage:nil
+                                                                        subtitle:nil
+                                                                           frame:CGRectMake(0, 0, 88, 88)
+                                                                            mode:HUDModeStandart];
+        self.hud.userInteractionOnUnderlyingViewsEnabled = YES;
         if (self.item.galleryType == MHGalleryTypeVideo) {
             [self addPlayButtonToView];
             
@@ -1074,12 +1138,13 @@
             self.scrollView.maximumZoomScale = 1;
             self.scrollView.minimumZoomScale =1;
             WKWebViewConfiguration *configuration = [WKWebViewConfiguration new];
-            configuration.preferences.javaScriptEnabled = YES;
             self.webView = [WKWebView.alloc initWithFrame:self.view.bounds configuration:configuration];
+            self.webView.navigationDelegate = self;
+            self.webView.allowsLinkPreview = NO;
             self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth |UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleBottomMargin;
             [self.view addSubview:self.webView];
         }
-        
+        [self.hud showOnView:self.view];
         self.imageView.userInteractionEnabled = YES;
         
         [imageTap requireGestureRecognizerToFail: doubleTap];
@@ -1093,7 +1158,7 @@
                     [weakSelf changeToErrorImage];
                 }
                 [weakSelf addWatermarkToImage:image error:error];
-                [[PKHUD sharedHUD] hide:YES completion:nil];
+                [self.hud hide:YES completion:nil];
             }];
             
         } else if (self.item.galleryType == MHGalleryTypeVideo){
@@ -1106,7 +1171,7 @@
                                                                     }else{
                                                                         [weakSelf changeToErrorImage];
                                                                     }
-                                                                    [[PKHUD sharedHUD] hide:YES completion:nil];
+                                                                    [self.hud hide:YES completion:nil];
                                                                 }];
         }
     }
@@ -1121,7 +1186,7 @@
     }else{
         self.imageView.image = image;
     }
-    [[PKHUD sharedHUD] hide:YES completion:nil];
+    [self.hud hide:YES completion:nil];
 }
 
 - (void)addWatermarkToImage:(UIImage *)image error:(NSError *)error {
@@ -1179,6 +1244,7 @@
             }
         }];
     } else if (self.item.galleryType == MHGalleryTypeAnother) {
+        [self.hud showOnView:self.view];
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.item.URLString]]];
     }
     
@@ -1206,8 +1272,6 @@
     self.playButton.hidden = NO;
     
     [self addWatermarkToImage:image error:nil];
-    
-    [[PKHUD sharedHUD] hide:YES completion:nil];
 }
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldBeRequiredToFailByGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
     if (self.interactiveOverView) {
@@ -1813,6 +1877,30 @@
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
     
+}
+
+#pragma - WKWebViewDelegate
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler {
+    if (navigationAction.navigationType == WKNavigationTypeLinkActivated) {
+        decisionHandler(WKNavigationActionPolicyCancel);
+        return;
+    }
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(WKNavigationResponse *)navigationResponse decisionHandler:(void (^)(WKNavigationResponsePolicy))decisionHandler {
+    CFStringRef MIMEType = (__bridge CFStringRef)navigationResponse.response.MIMEType;
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, MIMEType, NULL);
+    webView.configuration.preferences.javaScriptEnabled = !UTTypeConformsTo(UTI, kUTTypePDF);
+    decisionHandler(WKNavigationResponsePolicyAllow);
+}
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation {
+    [self.hud hide:YES completion:nil];
+}
+
+- (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error {
+    [self.hud hide:YES completion:nil];
 }
 @end
 
