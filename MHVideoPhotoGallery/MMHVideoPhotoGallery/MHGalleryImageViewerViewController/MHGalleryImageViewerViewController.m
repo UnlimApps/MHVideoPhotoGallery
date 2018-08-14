@@ -626,9 +626,6 @@
         if (vc.webView) {
             if (vc.item.galleryType == MHGalleryTypeAnother) {
                 [vc.webView stopLoading];
-                //stop audio via JS
-//                NSString *script = @"var vids = document.getElementsByTagName('video'); for( var i = 0; i < vids.length; i++ ){vids.item(i).pause()}";
-//                [vc.webView evaluateJavaScript:script completionHandler:nil];
                 [vc.webView loadHTMLString:@"" baseURL:nil];
             }
         }
@@ -1080,7 +1077,7 @@
         
         [self.view addGestureRecognizer:imageTap];
         [self.hud.contentView removeFromSuperview];
-        self.hud = [[PKHUD alloc] init];
+        self.hud = [PKHUD new];
         self.hud.contentView = [[PKHUDGearRotatingImageView alloc] initWithImage:nil
                                                                         subtitle:nil
                                                                            frame:CGRectMake(0, 0, 88, 88)
