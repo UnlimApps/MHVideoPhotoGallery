@@ -18,4 +18,6 @@
 "shareview.download"              = "download data\n";
 "shareview.download.cancel"       = "Cancel";
 "truncate.more"                   = "more";
-
+"Choose action" = "Choose action";
+"Share Link" = "Share Link";
+"Export Document" = "Export Document";

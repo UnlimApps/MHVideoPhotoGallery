@@ -11,7 +11,8 @@
 
 typedef NS_ENUM(NSUInteger, MHGalleryType) {
     MHGalleryTypeImage,
-    MHGalleryTypeVideo
+    MHGalleryTypeVideo,
+    MHGalleryTypeAnother
 };
 
 @interface MHGalleryItem : NSObject
