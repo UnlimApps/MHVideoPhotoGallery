@@ -18,6 +18,8 @@
 
 @protocol MHGalleryDelegate<NSObject>
 @optional
+-(BOOL)isReachableVideoItem;
+-(void)failLoadItemType:(NSUInteger)itemType;
 -(void)galleryController:(MHGalleryController*)galleryController didShowIndex:(NSInteger)index;
 -(BOOL)galleryController:(MHGalleryController*)galleryController shouldHandleURL:(NSURL *)URL;
 -(NSArray<MHBarButtonItem *>*)customizeableToolBarItems:(NSArray<MHBarButtonItem *>*)toolBarItems forGalleryItem:(MHGalleryItem*)galleryItem;

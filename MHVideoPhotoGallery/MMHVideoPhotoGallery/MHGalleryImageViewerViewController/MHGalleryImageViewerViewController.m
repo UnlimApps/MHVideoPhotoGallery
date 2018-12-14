@@ -1152,24 +1152,35 @@
             [self.imageView setImageForMHGalleryItem:self.item imageType:MHImageTypeFull successBlock:^(UIImage *image, NSError *error) {
                 if (!image) {
                     weakSelf.scrollView.maximumZoomScale  =1;
+                    if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
+                        [self.viewController.galleryViewController.galleryDelegate failLoadItemType: mediaItem.galleryType];
+                    }
                     [weakSelf changeToErrorImage];
                 }
                 [weakSelf addWatermarkToImage:image error:error];
                 [self.hud hide:YES completion:nil];
             }];
             
-        } else if (self.item.galleryType == MHGalleryTypeVideo){
-            [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.URLString
-                                                                successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
-                                                                    if (!error) {
-                                                                        [weakSelf handleGeneratedThumb:image
-                                                                                         videoDuration:videoDuration
-                                                                                             urlString:self.item.URLString];
-                                                                    }else{
-                                                                        [weakSelf changeToErrorImage];
-                                                                    }
-                                                                    [self.hud hide:YES completion:nil];
-                                                                }];
+        } else if (self.item.galleryType == MHGalleryTypeVideo) {
+            BOOL isReachable = YES;
+            if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(isReachableVideoItem)]) {
+                isReachable = [self.viewController.galleryViewController.galleryDelegate isReachableVideoItem];
+            }
+            if (isReachable) {
+                [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.URLString
+                                                                    successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
+                                                                        if (!error) {
+                                                                            [weakSelf handleGeneratedThumb:image
+                                                                                             videoDuration:videoDuration
+                                                                                                 urlString:self.item.URLString];
+                                                                        }else{
+                                                                            [weakSelf changeToErrorImage];
+                                                                        }
+                                                                        [self.hud hide:YES completion:nil];
+                                                                    }];
+            } else if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
+                [self.viewController.galleryViewController.galleryDelegate failLoadItemType: mediaItem.galleryType];
+            }
         }
     }
     
@@ -1899,5 +1910,14 @@
 - (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error {
     [self.hud hide:YES completion:nil];
 }
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+    [self.hud hide:YES completion:nil];
+    if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
+        [self.viewController.galleryViewController.galleryDelegate failLoadItemType: MHGalleryTypeAnother];
+    }
+    
+}
+
 @end
 
