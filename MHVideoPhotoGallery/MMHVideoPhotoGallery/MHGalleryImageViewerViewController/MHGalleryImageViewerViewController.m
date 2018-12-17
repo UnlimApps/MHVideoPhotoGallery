@@ -40,6 +40,7 @@
 @property (nonatomic)         CGPoint                  lastPoint;
 @property (nonatomic)         CGPoint                  lastPointPop;
 @property (nonatomic)         BOOL                     shouldPlayVideo;
+@property (nonatomic)         BOOL                     itemWasDownloaded;
 
 @end
 
@@ -141,11 +142,11 @@
                                           direction:UIPageViewControllerNavigationDirectionForward
                                            animated:NO
                                          completion:nil];
-        
         [self updateTitleLabelForIndex:self.pageIndex];
         [self updateDescriptionLabelForIndex:self.pageIndex];
         [self updateToolBarForItem:item];
         [self updateTitleForIndex:self.pageIndex];
+        [self showCurrentIndex:self.pageIndex];
     }
 }
 
@@ -790,7 +791,11 @@
         [self.galleryViewController.galleryDelegate galleryController:self.galleryViewController
                                                          didShowIndex:currentIndex];
     }
-    
+    MHImageViewController *vc = self.pageViewController.viewControllers.firstObject;
+    if ([self.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)] &&
+        !vc.itemWasDownloaded) {
+        [self.galleryViewController.galleryDelegate failLoadItemType: vc.item.galleryType];
+    }
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pvc viewControllerBeforeViewController:(MHImageViewController *)vc{
@@ -1032,6 +1037,7 @@
         self.view.backgroundColor = [UIColor blackColor];
         
         self.shouldPlayVideo = NO;
+        self.itemWasDownloaded = YES;
         
         self.item = mediaItem;
         
@@ -1152,24 +1158,33 @@
             [self.imageView setImageForMHGalleryItem:self.item imageType:MHImageTypeFull successBlock:^(UIImage *image, NSError *error) {
                 if (!image) {
                     weakSelf.scrollView.maximumZoomScale  =1;
+                    weakSelf.itemWasDownloaded = NO;
                     [weakSelf changeToErrorImage];
                 }
                 [weakSelf addWatermarkToImage:image error:error];
                 [self.hud hide:YES completion:nil];
             }];
             
-        } else if (self.item.galleryType == MHGalleryTypeVideo){
-            [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.URLString
-                                                                successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
-                                                                    if (!error) {
-                                                                        [weakSelf handleGeneratedThumb:image
-                                                                                         videoDuration:videoDuration
-                                                                                             urlString:self.item.URLString];
-                                                                    }else{
-                                                                        [weakSelf changeToErrorImage];
-                                                                    }
-                                                                    [self.hud hide:YES completion:nil];
-                                                                }];
+        } else if (self.item.galleryType == MHGalleryTypeVideo) {
+            BOOL isReachable = YES;
+            if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(isReachableVideoItem)]) {
+                isReachable = [self.viewController.galleryViewController.galleryDelegate isReachableVideoItem];
+            }
+            if (isReachable) {
+                [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.URLString
+                                                                    successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
+                                                                        if (!error) {
+                                                                            [weakSelf handleGeneratedThumb:image
+                                                                                             videoDuration:videoDuration
+                                                                                                 urlString:self.item.URLString];
+                                                                        }else{
+                                                                            [weakSelf changeToErrorImage];
+                                                                        }
+                                                                        [self.hud hide:YES completion:nil];
+                                                                    }];
+            } else {
+                weakSelf.itemWasDownloaded = NO;
+            }
         }
     }
     
@@ -1242,6 +1257,7 @@
         }];
     } else if (self.item.galleryType == MHGalleryTypeAnother) {
         [self.hud showOnView:self.view];
+        self.itemWasDownloaded = YES;
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.item.URLString]]];
     }
     
@@ -1899,5 +1915,14 @@
 - (void)webView:(WKWebView *)webView didFailNavigation:(null_unspecified WKNavigation *)navigation withError:(NSError *)error {
     [self.hud hide:YES completion:nil];
 }
+
+- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
+    [self.hud hide:YES completion:nil];
+    self.itemWasDownloaded = NO;
+    if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
+        [self.viewController.galleryViewController.galleryDelegate failLoadItemType: MHGalleryTypeAnother];
+    }
+}
+
 @end
 
