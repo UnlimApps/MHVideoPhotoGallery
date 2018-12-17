@@ -40,6 +40,7 @@
 @property (nonatomic)         CGPoint                  lastPoint;
 @property (nonatomic)         CGPoint                  lastPointPop;
 @property (nonatomic)         BOOL                     shouldPlayVideo;
+@property (nonatomic)         BOOL                     itemWasDownloaded;
 
 @end
 
@@ -141,11 +142,11 @@
                                           direction:UIPageViewControllerNavigationDirectionForward
                                            animated:NO
                                          completion:nil];
-        
         [self updateTitleLabelForIndex:self.pageIndex];
         [self updateDescriptionLabelForIndex:self.pageIndex];
         [self updateToolBarForItem:item];
         [self updateTitleForIndex:self.pageIndex];
+        [self showCurrentIndex:self.pageIndex];
     }
 }
 
@@ -790,7 +791,11 @@
         [self.galleryViewController.galleryDelegate galleryController:self.galleryViewController
                                                          didShowIndex:currentIndex];
     }
-    
+    MHImageViewController *vc = self.pageViewController.viewControllers.firstObject;
+    if ([self.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)] &&
+        !vc.itemWasDownloaded) {
+        [self.galleryViewController.galleryDelegate failLoadItemType: vc.item.galleryType];
+    }
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pvc viewControllerBeforeViewController:(MHImageViewController *)vc{
@@ -1032,6 +1037,7 @@
         self.view.backgroundColor = [UIColor blackColor];
         
         self.shouldPlayVideo = NO;
+        self.itemWasDownloaded = YES;
         
         self.item = mediaItem;
         
@@ -1152,9 +1158,7 @@
             [self.imageView setImageForMHGalleryItem:self.item imageType:MHImageTypeFull successBlock:^(UIImage *image, NSError *error) {
                 if (!image) {
                     weakSelf.scrollView.maximumZoomScale  =1;
-                    if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
-                        [self.viewController.galleryViewController.galleryDelegate failLoadItemType: mediaItem.galleryType];
-                    }
+                    weakSelf.itemWasDownloaded = NO;
                     [weakSelf changeToErrorImage];
                 }
                 [weakSelf addWatermarkToImage:image error:error];
@@ -1178,8 +1182,8 @@
                                                                         }
                                                                         [self.hud hide:YES completion:nil];
                                                                     }];
-            } else if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
-                [self.viewController.galleryViewController.galleryDelegate failLoadItemType: mediaItem.galleryType];
+            } else {
+                weakSelf.itemWasDownloaded = NO;
             }
         }
     }
@@ -1253,6 +1257,7 @@
         }];
     } else if (self.item.galleryType == MHGalleryTypeAnother) {
         [self.hud showOnView:self.view];
+        self.itemWasDownloaded = YES;
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.item.URLString]]];
     }
     
@@ -1913,10 +1918,10 @@
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     [self.hud hide:YES completion:nil];
+    self.itemWasDownloaded = NO;
     if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
         [self.viewController.galleryViewController.galleryDelegate failLoadItemType: MHGalleryTypeAnother];
     }
-    
 }
 
 @end
