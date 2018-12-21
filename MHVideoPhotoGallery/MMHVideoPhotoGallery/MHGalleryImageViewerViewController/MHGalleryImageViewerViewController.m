@@ -1170,7 +1170,7 @@
             if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(isReachableVideoItem)]) {
                 isReachable = [self.viewController.galleryViewController.galleryDelegate isReachableVideoItem];
             }
-            if (isReachable) {
+            if (isReachable || [self.item.URLString hasPrefix:@"file:"]) {
                 [MHGallerySharedManager.sharedManager startDownloadingThumbImage:self.item.URLString
                                                                     successBlock:^(UIImage *image,NSUInteger videoDuration,NSError *error) {
                                                                         if (!error) {
