@@ -141,12 +141,13 @@
         [self.pageViewController setViewControllers:@[imageViewController]
                                           direction:UIPageViewControllerNavigationDirectionForward
                                            animated:NO
-                                         completion:nil];
-        [self updateTitleLabelForIndex:self.pageIndex];
-        [self updateDescriptionLabelForIndex:self.pageIndex];
-        [self updateToolBarForItem:item];
-        [self updateTitleForIndex:self.pageIndex];
-        [self showCurrentIndex:self.pageIndex];
+                                         completion:^(BOOL finished) {
+            [self updateTitleLabelForIndex:self.pageIndex];
+            [self updateDescriptionLabelForIndex:self.pageIndex];
+            [self updateToolBarForItem:item];
+            [self updateTitleForIndex:self.pageIndex];
+            [self showCurrentIndex:self.pageIndex];
+        }];
     }
 }
 
@@ -1156,13 +1157,20 @@
             
             
             [self.imageView setImageForMHGalleryItem:self.item imageType:MHImageTypeFull successBlock:^(UIImage *image, NSError *error) {
+                [self.hud hide:YES completion:nil];
                 if (!image) {
                     weakSelf.scrollView.maximumZoomScale  =1;
                     weakSelf.itemWasDownloaded = NO;
                     [weakSelf changeToErrorImage];
+                    
+                    // RMD-4269: Workaround. Indicates that method 'showCurrentIndex' was called before get image callback.
+                    if (weakSelf.viewController.pageIndex == weakSelf.pageIndex) {
+                        if ([weakSelf.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
+                            [weakSelf.viewController.galleryViewController.galleryDelegate failLoadItemType: weakSelf.item];
+                        }
+                    }
                 }
                 [weakSelf addWatermarkToImage:image error:error];
-                [self.hud hide:YES completion:nil];
             }];
             
         } else if (self.item.galleryType == MHGalleryTypeVideo) {
