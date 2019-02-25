@@ -1887,6 +1887,7 @@
             frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2;
         }else{
             frameToCenter.origin.y = 0;
+        }
             
         self.imageView.frame = frameToCenter;
     }
