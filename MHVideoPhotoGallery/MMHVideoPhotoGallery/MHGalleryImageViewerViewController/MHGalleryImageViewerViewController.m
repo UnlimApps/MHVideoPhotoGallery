@@ -1072,6 +1072,7 @@
         UITapGestureRecognizer *imageTap =[UITapGestureRecognizer.alloc initWithTarget:self action:@selector(handelImageTap:)];
         imageTap.numberOfTapsRequired =1;
         
+        [self.imageView addGestureRecognizer:imageTap];
         [self.imageView addGestureRecognizer:doubleTap];
         
         self.pan.delegate = self;
