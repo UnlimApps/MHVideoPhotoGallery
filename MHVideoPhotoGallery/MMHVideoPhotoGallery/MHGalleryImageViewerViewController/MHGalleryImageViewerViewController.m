@@ -1043,13 +1043,16 @@
         self.item = mediaItem;
         
         self.scrollView = [UIScrollView.alloc initWithFrame:self.view.bounds];
-        self.scrollView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth |UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleBottomMargin;
         self.scrollView.delegate = self;
         self.scrollView.tag = 406;
         self.scrollView.maximumZoomScale =3;
         self.scrollView.minimumZoomScale= 1;
         self.scrollView.userInteractionEnabled = YES;
         [self.view addSubview:self.scrollView];
+        
+        [self.scrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.mas_equalTo(self.view);
+        }];
         
         
         self.imageView = [UIImageView.alloc initWithFrame:self.view.bounds];
@@ -1867,7 +1870,7 @@
     if(self.imageView.image){
         CGRect frame  = AVMakeRectWithAspectRatioInsideRect(self.imageView.image.size,CGRectMake(0, 0, self.scrollView.contentSize.width, self.scrollView.contentSize.height));
         
-        if (self.scrollView.contentSize.width==0 && self.scrollView.contentSize.height==0) {
+        if ((self.scrollView.contentSize.width==0 && self.scrollView.contentSize.height==0) || _scrollView.zoomScale == 1) {
             frame = AVMakeRectWithAspectRatioInsideRect(self.imageView.image.size,self.scrollView.bounds);
         }
         
@@ -1883,15 +1886,11 @@
             frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2;
         }else{
             frameToCenter.origin.y = 0;
-        }
-        
-        if (_scrollView.zoomScale == 1) {
-            frameToCenter = self.scrollView.bounds;
-        }
-        
+            
         self.imageView.frame = frameToCenter;
     }
 }
+
 -(void)scrollViewDidZoom:(UIScrollView *)scrollView{
     [self centerImageView];
 }
