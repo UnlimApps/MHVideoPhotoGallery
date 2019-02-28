@@ -1087,12 +1087,7 @@
         }
         
         [self.view addGestureRecognizer:imageTap];
-        [self.hud.contentView removeFromSuperview];
-        self.hud = [PKHUD new];
-        self.hud.contentView = [[PKHUDGearRotatingImageView alloc] initWithImage:nil
-                                                                        subtitle:nil
-                                                                           frame:CGRectMake(0, 0, 88, 88)
-                                                                            mode:HUDModeStandart];
+        self.hud = PKHUD.sharedHUD;
         self.hud.userInteractionOnUnderlyingViewsEnabled = YES;
         if (self.item.galleryType == MHGalleryTypeVideo) {
             [self addPlayButtonToView];
@@ -1152,7 +1147,9 @@
             self.webView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth |UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleBottomMargin;
             [self.view addSubview:self.webView];
         }
-        [self.hud showOnView:self.view];
+        if (!self.hud.isVisible) {
+            [self.hud showOnView:self.view];
+        }
         self.imageView.userInteractionEnabled = YES;
         
         [imageTap requireGestureRecognizerToFail: doubleTap];
