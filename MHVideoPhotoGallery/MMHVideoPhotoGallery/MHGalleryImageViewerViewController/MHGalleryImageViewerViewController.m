@@ -61,6 +61,8 @@
 
 @property (nonatomic) Boolean transtactionInProgress;
 
+@property (nonatomic) BOOL isAttachmentUploaded;
+
 @end
 
 @implementation MHGalleryImageViewerViewController
@@ -499,26 +501,59 @@
 }
 
 -(void)sharePressed{
-    UIAlertController *actioSheet = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(@"Choose action")
-                                                                        message:nil preferredStyle:UIAlertControllerStyleActionSheet];
-    __weak typeof(self) weakSelf = self;
-    [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"Share Link") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        MHImageViewController *imageViewController = (MHImageViewController*)weakSelf.pageViewController.viewControllers.firstObject;
-        [weakSelf showShareDialog: imageViewController.item.URLString];
-    }]];
-    [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"Export Document") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        MHImageViewController *imageViewController = (MHImageViewController*)weakSelf.pageViewController.viewControllers.firstObject;
-        if (imageViewController.item.galleryType == MHGalleryTypeImage) {
-            [weakSelf showShareDialog: imageViewController.imageView.image];
-        } else {
-            [weakSelf downloadFile:imageViewController.item];
+    self.isAttachmentUploaded = NO;
+    MHImageViewController *imageViewController = (MHImageViewController*)self.pageViewController.viewControllers.firstObject;
+    NSString * URLString = imageViewController.item.URLString;
+    NSURL *fileURL = [NSURL URLWithString:URLString];
+    self.isAttachmentUploaded = ![fileURL isFileURL];
+    
+    if (self.isAttachmentUploaded) {
+        UIAlertController *actioSheet = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(@"Choose action")
+                                                                            message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        __weak typeof(self) weakSelf = self;
+        [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"Share Link") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            MHImageViewController *imageViewController = (MHImageViewController*)weakSelf.pageViewController.viewControllers.firstObject;
+            [weakSelf showShareDialog: imageViewController.item.URLString];
+            
+            NSString * str = imageViewController.item.URLString;
+            NSLog(@"");
+        }]];
+        [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"Export Document") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            MHImageViewController *imageViewController = (MHImageViewController*)weakSelf.pageViewController.viewControllers.firstObject;
+            if (imageViewController.item.galleryType == MHGalleryTypeImage) {
+                [weakSelf showShareDialog: imageViewController.imageView.image];
+            } else {
+                [weakSelf downloadFile:imageViewController.item];
+            }
+        }]];
+        [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"shareview.download.cancel") style:UIAlertActionStyleCancel handler:nil]];
+        if (actioSheet.popoverPresentationController) {
+            actioSheet.popoverPresentationController.barButtonItem = self.shareBarButton;
         }
-    }]];
-    [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"shareview.download.cancel") style:UIAlertActionStyleCancel handler:nil]];
-    if (actioSheet.popoverPresentationController) {
-        actioSheet.popoverPresentationController.barButtonItem = self.shareBarButton;
+        [self presentViewController:actioSheet animated:YES completion:nil];
+    } else {
+        NSString *title = @"Whoops...";
+        NSString *message = @"The file hasn't been uploaded yet";
+        
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(title)
+                                                                                 message:MHGalleryLocalizedString(message) preferredStyle:UIAlertControllerStyleAlert];
+        
+        NSMutableAttributedString *attributedtitle = [[NSMutableAttributedString alloc] initWithString:title];
+        [attributedtitle addAttribute:NSFontAttributeName
+                      value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16]
+                      range:NSMakeRange(0, 9)];
+        [alertController setValue:attributedtitle forKey:@"attributedTitle"];
+        
+        NSMutableAttributedString *attributedMessage = [[NSMutableAttributedString alloc] initWithString:message];
+        [attributedMessage addAttribute:NSFontAttributeName
+                                 value:[UIFont fontWithName:@"HelveticaNeue" size:14]
+                                 range:NSMakeRange(0, 33)];
+        [alertController setValue:attributedMessage forKey:@"attributedMessage"];
+        
+        [alertController addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"OK") style:UIAlertActionStyleCancel handler:nil]];
+        alertController.view.tintColor = [UIColor colorWithRed:0.95 green:0.40 blue:0.13 alpha:1.0];
+        [self presentViewController:alertController animated:YES completion:nil];
     }
-    [self presentViewController:actioSheet animated:YES completion:nil];
 }
 
 - (void)removePressed {
