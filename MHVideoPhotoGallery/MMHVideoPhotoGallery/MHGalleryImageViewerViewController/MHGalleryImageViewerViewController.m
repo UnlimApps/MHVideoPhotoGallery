@@ -61,8 +61,6 @@
 
 @property (nonatomic) Boolean transtactionInProgress;
 
-@property (nonatomic) BOOL isAttachmentUploaded;
-
 @end
 
 @implementation MHGalleryImageViewerViewController
@@ -501,22 +499,19 @@
 }
 
 -(void)sharePressed{
-    self.isAttachmentUploaded = NO;
+    BOOL isAttachmentUploaded = NO;
     MHImageViewController *imageViewController = (MHImageViewController*)self.pageViewController.viewControllers.firstObject;
     NSString * URLString = imageViewController.item.URLString;
     NSURL *fileURL = [NSURL URLWithString:URLString];
-    self.isAttachmentUploaded = ![fileURL isFileURL];
+    isAttachmentUploaded = ![fileURL isFileURL];
     
-    if (self.isAttachmentUploaded) {
+    if (isAttachmentUploaded) {
         UIAlertController *actioSheet = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(@"Choose action")
                                                                             message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         __weak typeof(self) weakSelf = self;
         [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"Share Link") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             MHImageViewController *imageViewController = (MHImageViewController*)weakSelf.pageViewController.viewControllers.firstObject;
             [weakSelf showShareDialog: imageViewController.item.URLString];
-            
-            NSString * str = imageViewController.item.URLString;
-            NSLog(@"");
         }]];
         [actioSheet addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"Export Document") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             MHImageViewController *imageViewController = (MHImageViewController*)weakSelf.pageViewController.viewControllers.firstObject;
@@ -533,7 +528,7 @@
         [self presentViewController:actioSheet animated:YES completion:nil];
     } else {
         NSString *title = @"Whoops...";
-        NSString *message = @"The file hasn't been uploaded yet";
+        NSString *message = @"Please, try again later";
         
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(title)
                                                                                  message:MHGalleryLocalizedString(message) preferredStyle:UIAlertControllerStyleAlert];
@@ -547,7 +542,7 @@
         NSMutableAttributedString *attributedMessage = [[NSMutableAttributedString alloc] initWithString:message];
         [attributedMessage addAttribute:NSFontAttributeName
                                  value:[UIFont fontWithName:@"HelveticaNeue" size:14]
-                                 range:NSMakeRange(0, 33)];
+                                 range:NSMakeRange(0, 23)];
         [alertController setValue:attributedMessage forKey:@"attributedMessage"];
         
         [alertController addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"OK") style:UIAlertActionStyleCancel handler:nil]];
