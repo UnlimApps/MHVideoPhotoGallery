@@ -529,22 +529,8 @@
     } else {
         NSString *title = @"Whoops...";
         NSString *message = @"Please, try again later";
-        
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(title)
                                                                                  message:MHGalleryLocalizedString(message) preferredStyle:UIAlertControllerStyleAlert];
-        
-        NSMutableAttributedString *attributedtitle = [[NSMutableAttributedString alloc] initWithString:title];
-        [attributedtitle addAttribute:NSFontAttributeName
-                      value:[UIFont fontWithName:@"HelveticaNeue-Medium" size:16]
-                      range:NSMakeRange(0, 9)];
-        [alertController setValue:attributedtitle forKey:@"attributedTitle"];
-        
-        NSMutableAttributedString *attributedMessage = [[NSMutableAttributedString alloc] initWithString:message];
-        [attributedMessage addAttribute:NSFontAttributeName
-                                 value:[UIFont fontWithName:@"HelveticaNeue" size:14]
-                                 range:NSMakeRange(0, 23)];
-        [alertController setValue:attributedMessage forKey:@"attributedMessage"];
-        
         [alertController addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"OK") style:UIAlertActionStyleCancel handler:nil]];
         alertController.view.tintColor = [UIColor colorWithRed:0.95 green:0.40 blue:0.13 alpha:1.0];
         [self presentViewController:alertController animated:YES completion:nil];
