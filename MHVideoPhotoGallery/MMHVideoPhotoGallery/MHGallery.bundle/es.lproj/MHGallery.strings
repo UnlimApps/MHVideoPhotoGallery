@@ -22,3 +22,6 @@
 "Export Document"                 = "Exportar documento";
 "Whoops..."                       = "Ups...";
 "Please, try again later"         = "Intente de nuevo más adelante";
+"Unsupported file type"           = "Tipo de archivo no compatible";
+"OK"                              = "ACEPTAR";
+"Supported file types: .doc, .docx, .gif, .jpg, .mp3, .mp4, .pdf, .png, .ppt, .pptx, .xls, .xlsx" = "Tipos de archivo compatibles: .doc, .docx, .gif, .jpg, .mp3, .mp4, .pdf, .png, .ppt, .pptx, .xls, .xlsx";
