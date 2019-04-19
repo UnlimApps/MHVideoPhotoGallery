@@ -1941,8 +1941,18 @@
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     [self.hud hide:YES completion:nil];
     self.itemWasDownloaded = NO;
-    if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
-        [self.viewController.galleryViewController.galleryDelegate failLoadItemType: MHGalleryTypeAnother];
+    if (error.code == 912) {
+        NSString *title = @"Unsupported file type";
+        NSString *message = @"Supported file types: .doc, .docx, .gif, .jpg, .mp3, .mp4, .pdf, .png, .ppt, .pptx, .xls, .xlsx";
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(title)
+                                                                                 message:MHGalleryLocalizedString(message) preferredStyle:UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"OK") style:UIAlertActionStyleCancel handler:nil]];
+        alertController.view.tintColor = [UIColor colorWithRed:0.95 green:0.40 blue:0.13 alpha:1.0];
+        [self presentViewController:alertController animated:YES completion:nil];
+    } else if ((error.code >= 100 && error.code < 200) == NO) {
+        if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
+            [self.viewController.galleryViewController.galleryDelegate failLoadItemType: MHGalleryTypeAnother];
+        }
     }
 }
 

@@ -18,8 +18,11 @@
 "shareview.download"              = "download data\n";
 "shareview.download.cancel"       = "Cancel";
 "truncate.more"                   = "more";
-"Choose action" = "Choose action";
-"Share Link" = "Share Link";
-"Export Document" = "Export Document";
-"Whoops..." = "Whoops...";
-"Please, try again later" = "Please, try again later";
+"Choose action"                   = "Choose action";
+"Share Link"                      = "Share Link";
+"Export Document"                 = "Export Document";
+"Whoops..."                       = "Whoops...";
+"Please, try again later"         = "Please, try again later";
+"Unsupported file type"           = "Unsupported file type";
+"OK"                              = "OK";
+"Supported file types: .doc, .docx, .gif, .jpg, .mp3, .mp4, .pdf, .png, .ppt, .pptx, .xls, .xlsx" = "Supported file types: .doc, .docx, .gif, .jpg, .mp3, .mp4, .pdf, .png, .ppt, .pptx, .xls, .xlsx";
