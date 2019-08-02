@@ -733,7 +733,8 @@
         return;
     }
     
-    self.rightBarButton.enabled = YES;
+    self.leftBarButton.enabled = NO;
+    self.rightBarButton.enabled = NO;
     
     MHImageViewController *theCurrentViewController = self.pageViewController.viewControllers.firstObject;
     if (theCurrentViewController.moviePlayer) {
@@ -747,9 +748,6 @@
     MHImageViewController *imageViewController =[MHImageViewController imageViewControllerForMHMediaItem:[self itemForIndex:indexPage-1] viewController:self];
     imageViewController.pageIndex = indexPage-1;
     
-    if (indexPage-1 == 0) {
-        self.leftBarButton.enabled = NO;
-    }
     if (!imageViewController) {
         return;
     }
@@ -763,6 +761,9 @@
         [weakSelf showCurrentIndex:weakSelf.pageIndex];
         
         _transtactionInProgress = NO;
+        
+        self.leftBarButton.enabled = (indexPage-1 == 0) ? NO : YES;
+        self.rightBarButton.enabled = YES;
     }];
 }
 
@@ -771,7 +772,8 @@
         return;
     }
     
-    self.leftBarButton.enabled =YES;
+    self.leftBarButton.enabled = NO;
+    self.rightBarButton.enabled = NO;
     
     MHImageViewController *theCurrentViewController = self.pageViewController.viewControllers.firstObject;
     if (theCurrentViewController.moviePlayer) {
@@ -784,9 +786,6 @@
     MHImageViewController *imageViewController =[MHImageViewController imageViewControllerForMHMediaItem:[self itemForIndex:indexPage+1] viewController:self];
     imageViewController.pageIndex = indexPage+1;
     
-    if (indexPage+1 == self.numberOfGalleryItems-1) {
-        self.rightBarButton.enabled = NO;
-    }
     if (!imageViewController) {
         return;
     }
@@ -800,6 +799,9 @@
         [weakSelf showCurrentIndex:weakSelf.pageIndex];
         
         _transtactionInProgress = NO;
+        
+        self.rightBarButton.enabled = (indexPage+1 == self.numberOfGalleryItems-1) ? NO : YES;
+        self.leftBarButton.enabled = YES;
     }];
 }
 
