@@ -532,7 +532,6 @@
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(title)
                                                                                  message:MHGalleryLocalizedString(message) preferredStyle:UIAlertControllerStyleAlert];
         [alertController addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"OK") style:UIAlertActionStyleCancel handler:nil]];
-        alertController.view.tintColor = [UIColor colorWithRed:0.95 green:0.40 blue:0.13 alpha:1.0];
         [self presentViewController:alertController animated:YES completion:nil];
     }
 }
@@ -1949,7 +1948,6 @@
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:MHGalleryLocalizedString(title)
                                                                                  message:MHGalleryLocalizedString(message) preferredStyle:UIAlertControllerStyleAlert];
         [alertController addAction:[UIAlertAction actionWithTitle:MHGalleryLocalizedString(@"OK") style:UIAlertActionStyleCancel handler:nil]];
-        alertController.view.tintColor = [UIColor colorWithRed:0.95 green:0.40 blue:0.13 alpha:1.0];
         [self presentViewController:alertController animated:YES completion:nil];
     } else if ((error.code >= 100 && error.code < 200) == NO) {
         if ([self.viewController.galleryViewController.galleryDelegate respondsToSelector:@selector(failLoadItemType:)]) {
