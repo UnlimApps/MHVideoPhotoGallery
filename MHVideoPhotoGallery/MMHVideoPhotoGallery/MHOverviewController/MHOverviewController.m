@@ -65,9 +65,6 @@
     [super viewWillAppear:animated];
     
     [self setNeedsStatusBarAppearanceUpdate];
-    
-    [UIApplication.sharedApplication setStatusBarStyle:self.galleryViewController.preferredStatusBarStyleMH
-                                              animated:YES];
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle{

@@ -76,9 +76,6 @@
     
     [self setNeedsStatusBarAppearanceUpdate];
     
-    [UIApplication.sharedApplication setStatusBarStyle:self.galleryViewController.preferredStatusBarStyleMH
-                                              animated:YES];
-    
     [self.pageViewController.view.subviews.firstObject setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
 }
 
