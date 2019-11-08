@@ -14,10 +14,6 @@ Pod::Spec.new do |s|
   }
 
   s.dependency 'SDWebImage'
-  s.dependency 'TTTAttributedLabel'
-  s.dependency 'Masonry'
-  s.dependency 'PKHUD'
-  
 
   s.frameworks = 'MessageUI','Social', 'ImageIO', 'QuartzCore', 'Accelerate','CoreMedia', 'AVFoundation','MediaPlayer', 'WebKit'
 
